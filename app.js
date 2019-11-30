@@ -7,8 +7,11 @@ var expressHbs = require('express-handlebars');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var check=require('./routes/check');
+var mongoose=require('mongoose');
 var app = express();
-
+mongoose.connect('mongodb://localhost:27017/dirtyDB',{useNewUrlParser: true});
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', expressHbs({defaultLayout: 'layout', extname: '.hbs'}));
@@ -18,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/try',check)
+app.use('/check',check)
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
