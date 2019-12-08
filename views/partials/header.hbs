@@ -1,4 +1,25 @@
+<style>
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 20px;
+  height: 20px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
 
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
  <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="/"><i class="fas fa-home"></i> Home</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -7,18 +28,20 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item active"></li>
-            <a class="nav-link" href="/shopping-cart"><i class="fa fa-shopping-cart"></i> Shopping Cart <span
-                    class="badge badge-secondary"></span></a>
+          {{#if reqStatus}}
+            <li class="nav-item active">
+           <div class="loader"></div>         
             </li>
-            <li>
+            <li><span class="nav-link">Processing Request </sapn></li>
+            {{/if}}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
                     <i class="far fa-user"></i> User Management
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="/user/profile"> User account </a>
+                     <a class="dropdown-item" href="/socialMedia/facebook"> Facebook request </a>
+                    <a class="dropdown-item" href="/socialMedia/results"> Facebook results </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="/user/logout">logout</a>
                    

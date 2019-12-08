@@ -6,8 +6,11 @@ var logger = require('morgan');
 var expressHbs = require('express-handlebars');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var check=require('./routes/check');
+var socialMedia=require('./routes/socialMedia');
+var crawlingReq=require('./models/crawlingRequests');
+var resetReq=require('./models/resetCrawlingReq');
 var mongoose=require('mongoose');
+mongoose.set('useFindAndModify', false);
 var app = express();
 mongoose.connect('mongodb://localhost:27017/dirtyDB',{useNewUrlParser: true});
 var db = mongoose.connection;
@@ -21,9 +24,43 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/check',check)
+resetReq.resetCrawlingReq();
+app.use(async function(req, res, next){
+  var exists=false
+ await  crawlingReq.find({socialMedia:"facebook"},function (err, doc){
+    if(err){
+      console.log(err)
+    }
+    if(doc.length>0){
+      
+      app.locals.reqStatus=doc[0].requestHandling;
+      exists=true;
+    }  
+  });
+if(!exists){
+await  crawlingReq.find({socialMedia:"twitter"},function (err, doc){
+    if(err){
+      console.log(err)
+    }
+    if(doc.length>0){
+      
+      app.locals.reqStatus=doc[0].requestHandling;
+      exists=true;
+
+    }
+  });
+  if(!exists){
+    app.locals.reqStatus=false;
+  }
+
+}  
+  next();
+  });
+
+app.use('/socialMedia',socialMedia)
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

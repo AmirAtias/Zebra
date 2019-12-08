@@ -1,7 +1,16 @@
+var facebookSchema = require('./facebookPosts');
+var crawlingRequests = require('./crawlingRequests');
+var reset=require('./resetCrawlingReq');
+async function crawler(username, url) {
+  try{
 
- async function crawler(username,url) {
-  var Facebookposts = require('./facebookPosts');
-  var Facebookposts = new Facebookposts({
+  //update db -  start crawling
+  var filter = { socialMedia: "facebook" };
+  var update = { requestHandling: true };
+  await crawlingRequests.findOneAndUpdate(filter, update,{
+    upsert: true
+  });
+  var Facebookposts = new facebookSchema({
     facebookUserName: "Amit Atias",
     url: "https://www.facebook.com/profile.php?id=100001660335679",
   });
@@ -17,10 +26,11 @@
     .forBrowser("firefox")
     .setFirefoxOptions(firefoxOptions)
     .build();
-  await driver.get("https://www.facebook.com")
+  await driver.get("https://www.facebook.com");
+  /*
   //there is 2 login page options - handle both of them
   var logingPagePlaceHolders = await driver.findElements(By.css(".inputtext._55r1._6luy"));
-  //var logingPagePlaceHolders=await driver.findElements(By.css("._8opu"))
+  var logingPagePlaceHolders=await driver.findElements(By.css("._8opu"))
   if (logingPagePlaceHolders.length > 0) {
     await logingPagePlaceHolders[0].click();
     await logingPagePlaceHolders[0].sendKeys("amirzebra505@gmail.com")
@@ -139,8 +149,21 @@
       console.log("success")
     }
   });
+*/
+await driver.sleep(600000);
+reset.resetFacebook();
+
+
+
+
+}catch(error){ //reset facbook request in case there is error
+  console.log(error);
+  reset.resetFacebook();
+}
 
 }
 
 
-module.exports.crawler=crawler;
+
+
+module.exports.crawler = crawler;
