@@ -17,8 +17,8 @@
 
         /*-- Bootstrap Override Style --*/
         input {
-  width: 100%;
-}
+            width: 100%;
+        }
 
         /*-- Content Style --*/
         .post-footer-option li {
@@ -49,105 +49,102 @@
         .post-footer-comment-wrapper {
             background-color: #F6F7F8;
         }
-
-  
     </style>
 
 </head>
 
 <body>
     {{#if allPosts}}
- <div class="container">
-        <div class="col-md-12">
-        <form class="form" action="/socialMedia/results" method="POST">
-        
-  <div class="row form-group ">
-    <input type="password" class="col-5 ml-4 form-control  " id="inputPassword2" placeholder="Filter data">
-    <button type="submit" class="col-2 ml-4 btn btn-primary mb-2">submit  filter</button>
-    <button type="button" class="col-2  ml-4 btn btn-primary mb-2">save results</button>
-    <button type="button" class="col-2 ml-4 btn btn-primary mb-2">clear filter</button>
-
-
-  </div>
-  </div>
-</form>
- </div>   
-
-    {{#each allPosts}}
     <div class="container">
+
         <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <section class="post-heading">
-                        <div class="row">
-                            <div class="col-md-11">
-                                <div class="media">
-                                    <div class="media-left">
-                                        <a href="#">
-                                            <img class="media-object photo-profile"
-                                                src="https://www.kids-world.com/images/MK436.jpg"
-                                                width="40" height="40" alt="...">
-                                        </a>
-                                    </div>
-                                    <div class="media-body">
-                                        <a href="#" class="anchor-username">
-                                            <h4 class="media-heading">{{this.postHeader}}</h4>
-                                        </a>
-                                        <a href="#" class="anchor-time">51 mins</a>
+            <form class="form" action="/socialMedia/results" method="POST">
+
+                <div class="row form-group ">
+                    <input type="text" class="col-5 ml-4 form-control  " name="filter" id="filter"
+                        placeholder="Filter data">
+                    <button type="submit" class="col-2 ml-4 btn btn-primary mb-2">submit filter</button>
+                    <button type="button" class="col-2  ml-4 btn btn-primary mb-2">save results</button>
+                    <button type="button" class="col-2 ml-4 btn btn-primary mb-2">clear filter</button>
+                </div>
+                <h4 class="text-center" id="userName" name="userName">all facebook posts of:<span>{{facebookUserName}}</span></h4>
+            </form>
+        </div>
+        {{#each allPosts}}
+        <div class="container">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <section class="post-heading">
+                            <div class="row">
+                                <div class="col-md-11">
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <a href="#">
+                                                <img class="media-object photo-profile"
+                                                    src="https://www.kids-world.com/images/MK436.jpg" width="40"
+                                                    height="40" alt="...">
+                                            </a>
+                                        </div>
+                                        <div class="media-body">
+                                            <a href="#" class="anchor-username">
+                                                <h4 class="media-heading">{{this.postHeader}}</h4>
+                                            </a>
+                                            <a href="#" class="anchor-time">51 mins</a>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="col-md-1">
+                                    <a href="#"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                                </div>
                             </div>
-                            <div class="col-md-1">
-                                <a href="#"><i class="glyphicon glyphicon-chevron-down"></i></a>
+                        </section>
+                        <section class="post-body">
+                            <p>{{this.postContent}}</p>
+                        </section>
+                        <section class="post-footer">
+                            <hr>
+                            <div class="post-footer-option container">
+                                <ul class="list-unstyled">
+                                    <li><a href="#"><i class="glyphicon glyphicon-thumbs-up"></i> Like</a></li>
+                                    <li><a href="#"><i class="glyphicon glyphicon-comment"></i> Comment</a></li>
+                                    <li><a href="#"><i class="glyphicon glyphicon-share-alt"></i> Share</a></li>
+                                </ul>
                             </div>
-                        </div>
-                    </section>
-                    <section class="post-body">
-                        <p>{{this.postContent}}</p>
-                    </section>
-                    <section class="post-footer">
-                        <hr>
-                        <div class="post-footer-option container">
-                            <ul class="list-unstyled">
-                                <li><a href="#"><i class="glyphicon glyphicon-thumbs-up"></i> Like</a></li>
-                                <li><a href="#"><i class="glyphicon glyphicon-comment"></i> Comment</a></li>
-                                <li><a href="#"><i class="glyphicon glyphicon-share-alt"></i> Share</a></li>
-                            </ul>
-                        </div>
-                        <div class="post-footer-comment-wrapper">
-                            <div class="comment-form">
+                            <div class="post-footer-comment-wrapper">
+                                <div class="comment-form">
 
-                            </div>
-                            {{#each this.comments}}
-                            <div class="comment">
-                                <div class="media">
-                                    <div class="media-left">
-                                        <a href="#">
-                                            <img class="media-object photo-profile"
-                                                src="https://www.kids-world.com/images/MK436.jpg"
-                                                width="32" height="32" alt="...">
-                                        </a>
-                                    </div>
-                                    {{!-- <div class="media-body">
+                                </div>
+                                {{#each this.comments}}
+                                <div class="comment">
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <a href="#">
+                                                <img class="media-object photo-profile"
+                                                    src="https://www.kids-world.com/images/MK436.jpg" width="32"
+                                                    height="32" alt="...">
+                                            </a>
+                                        </div>
+                                        {{!-- <div class="media-body">
                                         <a href="#" class="anchor-username">
                                             <h4 class="media-heading">Media heading</h4>
                                         </a>
                                         <a href="#" class="anchor-time">51 mins</a>
                                     </div>  --}}
-                                    <section class="comment-body">
-                                        <p>{{this}}</p>
-                                    </section>
+                                        <section class="comment-body">
+                                            <p>{{this}}</p>
+                                        </section>
+                                    </div>
                                 </div>
+                                {{/each}}
                             </div>
-                            {{/each}}
-                        </div>
-                    </section>
+                        </section>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    {{/each}}
-    {{/if}}
+        {{/each}}
+        {{/if}}
 
 </body>
 <html>

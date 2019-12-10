@@ -26,7 +26,24 @@ router.get('/results', async function (req, res, next) {
       allPosts=doc;
     }
   });
-  res.render("socialMediaPosts",{allPosts:allPosts.posts});
+  res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
   });
+
+  router.post('/results', async function (req, res, next) {
+    var allPosts={};
+    
+    console.log(req.body.filter);
+    //'posts.postContent':{ "$regex": req.body.filter, "$options": "i" 
+    await facebookPosts.find({"facebookUserName":{"$regex":"atias", "$options": "i"}},function(err,doc){
+      if(err){
+        console.log(err);
+      }
+      else{
+        allPosts=doc[0];
+        console.log(doc.length);
+      }
+    });
+    res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
+    });
   
 module.exports = router;
