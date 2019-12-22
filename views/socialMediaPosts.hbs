@@ -4,7 +4,7 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script type="text/javascript">
+       <!--<script type="text/javascript">
       $(document).ready(function() {
         var temp=$('#fbName').text();
         console.log(temp);
@@ -13,7 +13,7 @@
   
         
        
-        </script>
+        </script>-->
     <style>
         /*-- Global Selectors --*/
         a {
@@ -68,17 +68,23 @@
     <div class="container">
 
         <div class="col-md-12">
-            <form class="form" action="/socialMedia/results" method="POST">
+            <form class="form" action="/socialMedia/results" method="POST" >
 
                 <div class="row form-group ">
                     <input type="text" class="col-5 ml-4 form-control  " name="filter" id="filter"
                         placeholder="Filter data">
                     <button type="submit" class="col-2 ml-4 btn btn-primary mb-2">submit filter</button>
-                    <button type="button" class="col-2  ml-4 btn btn-primary mb-2">save results</button>
-                    <button type="button" class="col-2 ml-4 btn btn-primary mb-2">clear filter</button>
+                    <button type="submit" class="col-2  ml-4 btn btn-primary mb-2" formaction="/socialMedia/saveResults">save results</button>
+                    <button type="button" class="col-2 ml-4 btn btn-primary mb-2"onclick="window.location.href = 'http://localhost:5000/socialMedia/results?userName={{facebookUserName}}';">clear filter</button>
                 </div>
                 <h4 class="text-center" id="userName" name="userName">all facebook posts of:<span id="fbName">{{facebookUserName}}</span></h4>
-                <input  type="text"   name="theName" id="theName" value="" style="visibility: hidden" >
+                {{#if filter}}
+                <h5 class="text-center">Filter By : {{filterBy}}</h5>
+                 <input  type="text"   name="filterBy" id="filterBy" value='{{filterBy}}' style="visibility: hidden" >    
+                {{else}}
+                <input  type="text"   name="filterBy" id="filterBy" value="" style="visibility: hidden">
+                {{/if}}
+                <input  type="text"   name="theName" id="theName" value='{{facebookUserName}}'style="visibility: hidden"  >
 
             </form>
         </div>
