@@ -4,7 +4,7 @@ var reset = require('./resetCrawlingReq');
 var post = require('./post');
 async function crawler(username, url) {
   try {
-
+//guy
     //update db -  start crawling
     var filter = { socialMedia: "facebook" };
     var update = { requestHandling: true };
