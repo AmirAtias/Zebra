@@ -4,6 +4,16 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript">
+      $(document).ready(function() {
+        var temp=$('#fbName').text();
+        console.log(temp);
+        $('#theName').val(temp);
+        });
+  
+        
+       
+        </script>
     <style>
         /*-- Global Selectors --*/
         a {
@@ -53,8 +63,8 @@
 
 </head>
 
-<body>
-    {{#if allPosts}}
+<body >
+    {{#if allPosts.length}}
     <div class="container">
 
         <div class="col-md-12">
@@ -67,7 +77,9 @@
                     <button type="button" class="col-2  ml-4 btn btn-primary mb-2">save results</button>
                     <button type="button" class="col-2 ml-4 btn btn-primary mb-2">clear filter</button>
                 </div>
-                <h4 class="text-center" id="userName" name="userName">all facebook posts of:<span>{{facebookUserName}}</span></h4>
+                <h4 class="text-center" id="userName" name="userName">all facebook posts of:<span id="fbName">{{facebookUserName}}</span></h4>
+                <input  type="text"   name="theName" id="theName" value="" style="visibility: hidden" >
+
             </form>
         </div>
         {{#each allPosts}}
@@ -144,7 +156,10 @@
             </div>
         </div>
         {{/each}}
+        {{else}}
+        <h2>user is not exist</h2>
         {{/if}}
+       
 
 </body>
 <html>

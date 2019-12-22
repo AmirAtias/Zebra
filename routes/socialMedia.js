@@ -17,33 +17,36 @@ router.post('/facebook', function (req, res, next) {
 
 });
 router.get('/results', async function (req, res, next) {
-  var allPosts={};
-  await facebookPosts.findOne({facebookUserName:"Amit Atias"},function(err,doc){
+   facebookPosts.findOne({facebookUserName:"Amit Atias"}).populate('posts').exec( function(err,doc){
     if(err){
       console.log(err);
     }
     else{
-      allPosts=doc;
+    
+      res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:"Amit Atias"});
     }
   });
-  res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
+
+
+  
   });
 
   router.post('/results', async function (req, res, next) {
-    var allPosts={};
-    
+    console.log(req.body.theName);
     console.log(req.body.filter);
     //'posts.postContent':{ "$regex": req.body.filter, "$options": "i" 
-    await facebookPosts.find({"facebookUserName":{"$regex":"atias", "$options": "i"}},function(err,doc){
+    facebookPosts.findOne({facebookUserName:"Amit Atias"}).populate({path: 'posts',
+    match: { postContent:{"$regex": req.body.filter, "$options": "i"}}}).exec( function(err,doc){
       if(err){
         console.log(err);
       }
       else{
-        allPosts=doc[0];
-        console.log(doc.length);
+  
+        res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:"Amit Atias"});
+
       }
     });
-    res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
+    //res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
     });
   
 module.exports = router;
