@@ -77,7 +77,7 @@
                     <button type="submit" class="col-2  ml-4 btn btn-primary mb-2" formaction="/socialMedia/saveResults">save results</button>
                     <button type="button" class="col-2 ml-4 btn btn-primary mb-2"onclick="window.location.href = 'http://localhost:5000/socialMedia/results?userName={{facebookUserName}}';">clear filter</button>
                 </div>
-                <h4 class="text-center" id="userName" name="userName">all facebook posts of:<span id="fbName">{{facebookUserName}}</span></h4>
+                <h4 class="text-center" id="userName" name="userName">all posts of:<span id="fbName">{{facebookUserName}}</span></h4>
                 {{#if filter}}
                 <h5 class="text-center">Filter By : {{filterBy}}</h5>
                  <input  type="text"   name="filterBy" id="filterBy" value='{{filterBy}}' style="visibility: hidden" >    

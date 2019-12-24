@@ -2,7 +2,7 @@ var crawlingRequests = require('./crawlingRequests');
 var update = { requestHandling: false };
 async function resetCrawlingReq(){
     resetFacebook();
-    resetTwitter();
+    resetWorldExplorer();
  
 }
 
@@ -11,11 +11,11 @@ async function resetFacebook(){
         upsert: true //create new document in case there is no match
       });
 }
-async function resetTwitter(){
-    await crawlingRequests.findOneAndUpdate({socialMedia: "twitter"}, update,{
+async function resetWorldExplorer(){
+    await crawlingRequests.findOneAndUpdate({socialMedia: "worldExplorer"}, update,{
         upsert: true
       });
 }
 module.exports.resetCrawlingReq=resetCrawlingReq;
 module.exports.resetFacebook=resetFacebook;
-module.exports.resetTwitter=resetTwitter;
+module.exports.resetWorldExplorer=resetWorldExplorer;

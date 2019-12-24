@@ -31,18 +31,18 @@ app.use(async function(req, res, next){
     if(err){
       console.log(err)
     }
-    if(doc.length>0){
-      
+    if(doc[0].requestHandling){
       app.locals.reqStatus=doc[0].requestHandling;
       exists=true;
     }  
   });
 if(!exists){
-await  crawlingReq.find({socialMedia:"twitter"},function (err, doc){
+await  crawlingReq.find({socialMedia:"worldExplorer"},function (err, doc){
     if(err){
       console.log(err)
     }
-    if(doc.length>0){
+    console.log(doc[0]);
+    if(doc[0].requestHandling){
       
       app.locals.reqStatus=doc[0].requestHandling;
       exists=true;

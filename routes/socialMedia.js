@@ -1,5 +1,6 @@
 var express = require('express');
-var FacebookC = require('../models/facebookCrawler');
+var FacebookC = require('../models/facebookCrawler'); 
+var worldExplorerC = require('../models/worldExplorerCrawler');
 var crawlingReq=require('../models/crawlingRequests');
 var facebookPosts=require('../models/facebookPosts');
 var posts=require('../models/post');
@@ -18,19 +19,28 @@ router.post('/facebook', function (req, res, next) {
   res.redirect('/')
 
 });
+
+router.get('/worldExplorer', function (req, res, next) {
+  res.render("worldExplorer");
+  });
+  
+router.post('/worldExplorer', function (req, res, next) {
+    var UserName=req.body.userName;
+    var Url=req.body.url;
+    worldExplorerC.crawler(UserName,Url);
+    res.redirect('/')
+  });
+
 router.get('/results', async function (req, res, next) {
-   facebookPosts.findOne({facebookUserName:"Amit Atias"}).populate('posts').exec( function(err,doc){
+   facebookPosts.findOne({facebookUserName:"edenshavit"}).populate('posts').exec( function(err,doc){
     if(err){
       console.log(err);
     }
     else{
-    
-      res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:"Amit Atias",filter:false});
+      res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:"edenshavit",filter:false});
     }
+ 
   });
-
-
-  
   });
 
   router.post('/results', async function (req, res, next) {
@@ -44,16 +54,14 @@ router.get('/results', async function (req, res, next) {
       }
       else{
   
-        res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:"Amit Atias",filter:true,filterBy:req.body.filter});
+        res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:"edenshavit",filter:true,filterBy:req.body.filter});
 
       }
     });
     //res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
     });
-    
+
     router.post('/saveResults', async function (req, res, next) {
-     
-      
       facebookPosts.findOne({facebookUserName:req.body.theName}).populate({path: 'posts',
       match: { postContent:{"$regex": req.body.filterBy, "$options": "i"}}}).exec( async function(err,doc){
         if(err){
