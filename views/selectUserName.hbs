@@ -1,0 +1,129 @@
+{{!-- 
+<html>
+  <head>
+<style>
+body,h1 {font-family: "Raleway", sans-serif}
+.page {
+  position: fixed; /* or absolute */
+  top: 20%;
+  left: 30%; 
+}
+
+h1{
+    font-size: 2vw; 
+  font-weight: 50; 
+  color: #fff; 
+  line-height: 1;
+}
+.pageContent{
+     font-size: 2vw; 
+  font-weight: 200; 
+  color: #fff; 
+  line-height: 1;
+  margin-top:40px;
+}
+button{
+    margin-top:40px;
+    background-color: rgb(10, 97, 226);
+    width: 300px
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>
+    Select one username to see its results
+  </h1>
+    <h4 >{{allUserNames}}</span></h4>
+
+  <div class="pageContent">
+    <div class="w3-jumbo w3-animate-top" style="margin:auto paddingL20%">Data Crawling Services for Social Media</div>
+    <hr class="w3-border-grey" style="margin:auto;width:40%">
+    <button type="button" onClick="location.href='socialMedia/worldExplorer'">allUserNames</button>
+  </div>
+
+
+</div>
+
+</body>
+</html> --}}
+
+
+
+
+
+
+
+
+{{!-- 
+<HTML>
+
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Do not select a fruit, just click the button. The selectedIndex property will return "-1" if no options are selected.</p>
+
+<select id="mySelect">
+  <option>{{allUserNames}</option>
+  
+</select>
+
+<button type="button" onclick="myFunction()">Display index</button>
+
+<script>
+    
+function myFunction() {
+  var x = {{allUserNames}};
+  var nameOption = "<option value='0'>select</option>";
+  console.log( allallUserNames.length);
+  for(var i = 0; i++; allallUserNames.length){
+      nameOption += "<option value='"+x[i]"'>"+x[i]"</option>"
+  }
+  document.getElementById('mySelect').innerHTML = nameOption;
+
+}
+</script>
+
+</body>
+</html> --}}
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Select user</title>
+    </head>
+    <h4 >{{allUserNames}}</span></h4>
+
+    <body>
+
+        <select id="select" names={{allallUserNames}}>
+            <option value="default">default</option>
+        </select>
+        
+        
+
+    </body>
+    <script>
+            document.currentScript.getAttribute('names');  
+            var select = document.getElementById("select"),
+            arr = names;
+           // arr = ["html","css","java","javascript","php","c++","node.js","ASP","JSP","SQL"];
+             for(var i = 0; i < arr.length; i++)
+             {
+                 var option = document.createElement("OPTION"),
+                 txt = document.createTextNode(arr[i]);
+                 option.appendChild(txt);
+                 option.setAttribute("value",arr[i]);
+                 select.insertBefore(option,select.lastChild);
+             }
+             
+        </script>
+</html>

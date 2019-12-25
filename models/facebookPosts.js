@@ -5,7 +5,8 @@ var facebookSchema = new Schema({
 url:{type:String,required:true},
 facebookUserName:{type:String,required:true},
 posts:[{type:Schema.Types.ObjectId,ref:'Post'}],
-filter:{type:String}
+filter:{type:String},
+socialMedia:{type:String,required:true}
 });
 
 module.exports=mongoose.model('FacebookPosts',facebookSchema);

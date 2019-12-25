@@ -4,7 +4,7 @@ var facebookSchema = require('./facebookPosts');
 var crawlingRequests = require('./crawlingRequests');
 var reset = require('./resetCrawlingReq');
 var post = require('./post');
-async function crawler(username, url) {
+async function crawler(username, url,socialMedia) {
   try {
     //update db -  start crawling
 
@@ -20,9 +20,12 @@ async function crawler(username, url) {
     var Facebookposts = new facebookSchema({
       facebookUserName: "edenshavit",
       url: "http://localhost:3000/edenshavit",
+      socialMedia: "worldExplorer"
     });
     console.log(username);
     console.log(url);
+    console.log(socialMedia);
+
     const {
       Builder,
       Key,

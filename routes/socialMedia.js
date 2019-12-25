@@ -5,7 +5,6 @@ var crawlingReq=require('../models/crawlingRequests');
 var facebookPosts=require('../models/facebookPosts');
 var posts=require('../models/post');
 var mongoose=require('mongoose');
-
 var router = express.Router();
 
 router.get('/facebook', function (req, res, next) {
@@ -43,6 +42,8 @@ router.get('/results', async function (req, res, next) {
   });
   });
 
+  
+
   router.post('/results', async function (req, res, next) {
     console.log(req.body.theName);
     console.log(req.body.filter);
@@ -60,7 +61,24 @@ router.get('/results', async function (req, res, next) {
     });
     //res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
     });
-
+    router.get('/selectUser', async function (req, res, next) {
+      facebookPosts.find({}).exec( function(err,doc){
+        var arrOfAllUserName = [];
+          if(err){
+            console.log(err);
+          }
+          else{
+            doc.forEach(function(user) {
+              arrOfAllUserName.push(user.facebookUserName);
+            });
+        
+            //res.send(arrOfAllUserName);  
+            res.render("selectUserName",{allUserNames:arrOfAllUserName});
+           
+          }
+       
+        });
+      });
     router.post('/saveResults', async function (req, res, next) {
       facebookPosts.findOne({facebookUserName:req.body.theName}).populate({path: 'posts',
       match: { postContent:{"$regex": req.body.filterBy, "$options": "i"}}}).exec( async function(err,doc){

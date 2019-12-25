@@ -2,7 +2,7 @@ var facebookSchema = require('./facebookPosts');
 var crawlingRequests = require('./crawlingRequests');
 var reset = require('./resetCrawlingReq');
 var post = require('./post');
-async function crawler(username, url) {
+async function crawler(username, url,socialMedia) {
   try {
     //update db -  start crawling
     var filter = { socialMedia: "facebook" };
@@ -13,9 +13,11 @@ async function crawler(username, url) {
     var Facebookposts = new facebookSchema({
       facebookUserName: "Amit Atias",
       url: "https://www.facebook.com/profile.php?id=100001660335679",
+      socialMedia:"facebook"
     });
     console.log(username);
     console.log(url);
+    console.log(socialMedia);
     const { Builder, Key, promise, until, By, webdriver } = require('selenium-webdriver');
     require('selenium-webdriver/lib/error');
     const firefox = require('selenium-webdriver/firefox');
