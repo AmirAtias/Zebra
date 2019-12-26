@@ -18,14 +18,10 @@ async function crawler(username, url,socialMedia) {
       upsert: true
     });
     var Facebookposts = new facebookSchema({
-      facebookUserName: "edenshavit",
-      url: "http://localhost:3000/edenshavit",
+      facebookUserName: username,
+      url: url,
       socialMedia: "worldExplorer"
     });
-    console.log(username);
-    console.log(url);
-    console.log(socialMedia);
-
     const {
       Builder,
       Key,
@@ -43,14 +39,15 @@ async function crawler(username, url,socialMedia) {
       .forBrowser("firefox")
       .setFirefoxOptions(firefoxOptions)
       .build();
+
     await driver.get('http://localhost:3000');
     await driver.sleep(10000);
 
     element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[1]/div/div/form/div/div[1]/input'));
 
-    await element.sendKeys('itaiguymay1234@gmail.com');
+    await element.sendKeys('oshri@gmail.com');
     element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[1]/div/div/form/div/div[2]/input'));
-    await element.sendKeys('amirguy1234', Key.RETURN);
+    await element.sendKeys('123456789', Key.RETURN);
     setTimeout(function () {}, 3000);
 
     await driver.sleep(2000);
@@ -62,9 +59,9 @@ async function crawler(username, url,socialMedia) {
     await driver.sleep(2000);
 
     var className = ".sc-gqPbQI.hcaOkx";
-    var AllPosts = await driver.findElements(By.css(className));
-    var numberOfPosts = AllPosts.length;
-
+    var allPosts = await driver.findElements(By.css(className));
+    var numberOfPosts = allPosts.length;
+    //Scrolls to the bottom
     while (true) {
       await (driver).executeScript("window.scrollTo(0, document.body.scroll);");
       await driver.sleep(3000);
@@ -80,15 +77,12 @@ async function crawler(username, url,socialMedia) {
       }
     }
 
-    var finalAllPosts = await driver.findElements(By.css(className));
-    await driver.executeScript("arguments[0].scrollIntoView(false);", finalAllPosts[0]); //  scrolling to top
-    for (let index = 0; index < finalAllPosts.length; index++) {
-      const element = finalAllPosts[index];
+    allPosts = await driver.findElements(By.css(className));
+    await driver.executeScript("arguments[0].scrollIntoView(false);", allPosts[0]); //  scrolling to top
+    for (let index = 0; index < allPosts.length; index++) {
+      const element = allPosts[index];
       var postHeader = await element.findElements(By.css(".sc-iujRgT.eHHHfk"));
       var date = await element.findElements(By.css(".sc-bMVAic.ddJtUJ"));
-      var header = await postHeader[0].getText() + " date: " + await date[0].getText();
-      console.log(header);
-
       var postContentContainer = await element.findElements(By.css(".sc-jzJRlG.fkPtct"));
       var postContent;
       if (postContentContainer.length > 0) //handle post content
@@ -98,16 +92,13 @@ async function crawler(username, url,socialMedia) {
       var commentsButton = await element.findElements(By.css(".sc-ifAKCX.sc-lkqHmb.hdufcJ"));
       await commentsButton[0].click();
       await driver.sleep(1000);
-      console.log(postContent);
       var commentsContainer = await element.findElements(By.css(".sc-kfGgVZ.hcILRE"));
       await driver.sleep(1000);
       var tempCommentsArr = [];
       if (commentsContainer.length > 0) { //check if the post contian comments
         await driver.sleep(1000);
-        console.log(commentsContainer.length);
         for (e of commentsContainer) {
           tempCommentsArr.push(await e.getText());
-          console.log(await e.getText());
         }
         var tempPost = new post({
           postHeader: await postHeader[0].getText(),
@@ -116,7 +107,6 @@ async function crawler(username, url,socialMedia) {
         });
       
       }
-      //res.send(allPostsContent[0].replace(/\n/g, "<br />"));
       else {
         var tempPost = new post({
           postHeader: await postHeader[0].getText(),
@@ -126,10 +116,9 @@ async function crawler(username, url,socialMedia) {
       }
       await tempPost.save();
       Facebookposts.posts.push(tempPost);
-      await driver.executeScript("arguments[0].scrollIntoView(false);", AllPosts[index]);
+      await driver.executeScript("arguments[0].scrollIntoView(false);", allPosts[index]);
       await driver.sleep(1000);
     }
-    //guy
     Facebookposts.save(function (err, result) {
       if (err) {
         console.log(err.message)

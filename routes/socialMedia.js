@@ -31,6 +31,7 @@ router.post('/worldExplorer', function (req, res, next) {
   });
 
 router.get('/results', async function (req, res, next) {
+   console.log(req.query.userName);
    facebookPosts.findOne({facebookUserName:req.query.userName}).populate('posts').exec( function(err,doc){
     if(err){
       console.log(err);
@@ -54,11 +55,10 @@ router.get('/results', async function (req, res, next) {
       }
       else{
   
-        res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:"edenshavit",filter:true,filterBy:req.body.filter});
+        res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:req.body.theName,filter:true,filterBy:req.body.filter});
 
       }
     });
-    //res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
     });
     router.get('/displayResults', async function (req, res, next) {
       facebookPosts.find({}).exec( function(err,doc){
@@ -102,7 +102,6 @@ router.get('/results', async function (req, res, next) {
   
         }
       });
-      //res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
       });
   
 module.exports = router;
