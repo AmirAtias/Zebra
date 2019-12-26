@@ -41,7 +41,7 @@ await  crawlingReq.find({socialMedia:"worldExplorer"},function (err, doc){
     if(err){
       console.log(err)
     }
-    console.log(doc[0]);
+    
     if(doc[0].requestHandling){
       
       app.locals.reqStatus=doc[0].requestHandling;

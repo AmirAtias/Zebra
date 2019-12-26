@@ -31,12 +31,12 @@ router.post('/worldExplorer', function (req, res, next) {
   });
 
 router.get('/results', async function (req, res, next) {
-   facebookPosts.findOne({facebookUserName:"edenshavit"}).populate('posts').exec( function(err,doc){
+   facebookPosts.findOne({facebookUserName:req.query.userName}).populate('posts').exec( function(err,doc){
     if(err){
       console.log(err);
     }
     else{
-      res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:"edenshavit",filter:false});
+      res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:req.query.userName,filter:false});
     }
  
   });
@@ -45,8 +45,7 @@ router.get('/results', async function (req, res, next) {
   
 
   router.post('/results', async function (req, res, next) {
-    console.log(req.body.theName);
-    console.log(req.body.filter);
+  
     //'posts.postContent':{ "$regex": req.body.filter, "$options": "i" 
     facebookPosts.findOne({facebookUserName:req.body.theName}).populate({path: 'posts',
     match: { postContent:{"$regex": req.body.filter, "$options": "i"}}}).exec( function(err,doc){
@@ -61,7 +60,7 @@ router.get('/results', async function (req, res, next) {
     });
     //res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
     });
-    router.get('/selectUser', async function (req, res, next) {
+    router.get('/displayResults', async function (req, res, next) {
       facebookPosts.find({}).exec( function(err,doc){
         var arrOfAllUserName = [];
           if(err){
@@ -71,8 +70,7 @@ router.get('/results', async function (req, res, next) {
             doc.forEach(function(user) {
               arrOfAllUserName.push(user.facebookUserName);
             });
-        
-            //res.send(arrOfAllUserName);  
+            //res.render("selectUserName",{allUserNames:[]});
             res.render("selectUserName",{allUserNames:arrOfAllUserName});
            
           }
