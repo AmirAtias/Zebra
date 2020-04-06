@@ -1,6 +1,5 @@
 
-
-var facebookSchema = require('./facebookPosts');
+var facebookSchema = require('./profile');
 var crawlingRequests = require('./crawlingRequests');
 var reset = require('./resetCrawlingReq');
 var post = require('./post');

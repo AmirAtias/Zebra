@@ -10,6 +10,8 @@ var socialMedia=require('./routes/socialMedia');
 var crawlingReq=require('./models/crawlingRequests');
 var resetReq=require('./models/resetCrawlingReq');
 var mongoose=require('mongoose');
+var cors = require('cors')
+
 mongoose.set('useFindAndModify', false);
 var app = express();
 mongoose.connect('mongodb://localhost:27017/dirtyDB',{useNewUrlParser: true});
@@ -24,6 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors()) 
 resetReq.resetCrawlingReq();
 app.use(async function(req, res, next){
   var exists=false

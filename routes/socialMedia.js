@@ -2,84 +2,74 @@ var express = require('express');
 var FacebookC = require('../models/facebookCrawler'); 
 var worldExplorerC = require('../models/worldExplorerCrawler');
 var crawlingReq=require('../models/crawlingRequests');
-var facebookPosts=require('../models/facebookPosts');
+var profile=require('../models/profile');
 var posts=require('../models/post');
 var mongoose=require('mongoose');
 var router = express.Router();
 
-router.get('/facebook', function (req, res, next) {
-res.render("facebook");
-});
 
-router.post('/facebook', function (req, res, next) {
+router.post('/startCrawling', function (req, res, next) {
   var UserName=req.body.userName;
-  var Url=req.body.url;
-  FacebookC.crawler(UserName,Url);
-  res.redirect('/')
+	var Url=req.body.url;
+	var socialMedia=req.body.socialMedia
+	//validate url and username
+	console.log("username:"+UserName+" url" +Url +"socialMedia" +socialMedia)
+ //FacebookC.crawler("sdds","sdsd","sdsds");
+ res.json({validationSucess:"true"});
 
 });
 
-router.get('/worldExplorer', function (req, res, next) {
-  res.render("worldExplorer");
-  });
-  
-router.post('/worldExplorer', function (req, res, next) {
-    var UserName=req.body.userName;
-    var Url=req.body.url;
-    worldExplorerC.crawler(UserName,Url);
-    res.redirect('/')
-  });
 
-router.get('/results', async function (req, res, next) {
-   facebookPosts.findOne({facebookUserName:req.query.userName}).populate('posts').exec( function(err,doc){
+//get all posts of  user
+router.get('/allposts', async function (req, res, next) {
+  profile
+  .findOne({userName:req.query.userName ,socialMedia:req.query.socialMedia}).populate('posts').exec( function(err,doc){
     if(err){
       console.log(err);
+      res.json({allPosts:[]})
     }
     else{
-      res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:req.query.userName,filter:false});
+      res.json({allPosts:doc.posts});
     }
  
-  });
+       });
   });
 
   
 
-  router.post('/results', async function (req, res, next) {
-  
-    //'posts.postContent':{ "$regex": req.body.filter, "$options": "i" 
-    facebookPosts.findOne({facebookUserName:req.body.theName}).populate({path: 'posts',
-    match: { postContent:{"$regex": req.body.filter, "$options": "i"}}}).exec( function(err,doc){
+  router.get('/filterPosts', async function (req, res, next) {
+	 
+		profile.findOne({userName:req.query.userName ,socialMedia:req.query.socialMedia}).populate({path: 'posts',
+    match: { postContent:{"$regex": req.query.filter, "$options": "i"}}}).exec( function(err,doc){
       if(err){
         console.log(err);
+				res.json({allPosts:[]})
       }
       else{
-  
-        res.render("socialMediaPosts",{allPosts:doc.posts,facebookUserName:"edenshavit",filter:true,filterBy:req.body.filter});
-
+				res.json({allPosts:doc.posts})
       }
+      });
     });
-    //res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
-    });
-    router.get('/displayResults', async function (req, res, next) {
-      facebookPosts.find({}).exec( function(err,doc){
+    router.get('/displayAllUsers', async function (req, res, next) {
+      profile.find({socialMedia:req.query.socialMedia}).exec( function(err,doc){
         var arrOfAllUserName = [];
           if(err){
             console.log(err);
           }
           else{
             doc.forEach(function(user) {
-              arrOfAllUserName.push(user.facebookUserName);
-            });
-            //res.render("selectUserName",{allUserNames:[]});
-            res.render("selectUserName",{allUserNames:arrOfAllUserName});
-           
+              arrOfAllUserName.push(user.userName);
+            }
+            );
+           res.json({users:arrOfAllUserName});
           }
        
         });
       });
     router.post('/saveResults', async function (req, res, next) {
-      facebookPosts.findOne({facebookUserName:req.body.theName}).populate({path: 'posts',
-      match: { postContent:{"$regex": req.body.filterBy, "$options": "i"}}}).exec( async function(err,doc){
+   profile
+    .findOne({userName:req.body.userName,socialMedia:req.body.socialMedia}).populate({path: 'posts',
+      match: { postContent:{"$regex": req.body.filter, "$options": "i"}}}).exec( async function(err,doc){
         if(err){
           console.log(err);
         }
@@ -93,16 +83,14 @@ router.get('/results', async function (req, res, next) {
           }
           doc._id = mongoose.Types.ObjectId();
           doc.isNew = true; //<--------------------IMPORTANT
-          doc.filter=req.body.filterBy
+          doc.filter=req.body.filter
           await doc.save();
           await mongoose.disconnect();
           await mongoose.connect('mongodb://localhost:27017/dirtyDB',{useNewUrlParser: true});
 
-          res.redirect('/')
-  
-        }
-      });
-      //res.render("socialMediaPosts",{allPosts:allPosts.posts,facebookUserName:"Amit Atias"});
+          res.json({isSucess:"true"})  
+      }})
+      
       });
   
 module.exports = router;

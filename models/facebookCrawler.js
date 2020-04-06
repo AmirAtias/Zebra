@@ -1,17 +1,17 @@
-var facebookSchema = require('./facebookPosts');
+var profile = require('./profile');
 var crawlingRequests = require('./crawlingRequests');
 var reset = require('./resetCrawlingReq');
 var post = require('./post');
 async function crawler(username, url,socialMedia) {
   try {
     //update db -  start crawling
-    var filter = { socialMedia: "facebook" };
+    var filter = { socialMedia: "Facebook" };
     var update = { requestHandling: true };
     await crawlingRequests.findOneAndUpdate(filter, update, {
       upsert: true
     });
-    var Facebookposts = new facebookSchema({
-      facebookUserName: "Amit Atias",
+    var Facebookposts = new profile({
+      userName: "pazit atias",
       url: "https://www.facebook.com/profile.php?id=100001660335679",
       socialMedia:"facebook"
     });
@@ -53,13 +53,13 @@ async function crawler(username, url,socialMedia) {
     var existed = false;
 
     while (!existed) { // load all hidden posts
-      existed = await driver.findElement(By.css(".img.sp_jgaSVtiDmn__1_5x.sx_dd9709")).then(function () {
-        return true;//it existed
+      existed = await driver.findElement(By.css(".img.sp_dPnsHOPzupp.sx_0f6785")).then(function () {
+        return true;// existed
       }, function (err) {
         if (err.name === "NoSuchElementError") {
           driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");//keep scrolling
           driver.sleep(2000);
-          return false;//it was not found
+          return false;//not found
         } else {
           promise.rejected(err);
         }
@@ -172,7 +172,9 @@ async function crawler(username, url,socialMedia) {
 
 }
 
+ 
 
 
 
 module.exports.crawler = crawler;
+
