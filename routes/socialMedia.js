@@ -6,15 +6,23 @@ var profile=require('../models/profile');
 var posts=require('../models/post');
 var mongoose=require('mongoose');
 var router = express.Router();
+var app=require("../app");
+router.get('/requestStatus',async function(req, res, next){
+    if(reqStatus){
+      res.json({handleRequest:true})
+    }
+    else{
+      res.json({handleRequest:false})
 
-
+    }
+  });
 router.post('/startCrawling', function (req, res, next) {
   var UserName=req.body.userName;
 	var Url=req.body.url;
 	var socialMedia=req.body.socialMedia
 	//validate url and username
 	console.log("username:"+UserName+" url" +Url +"socialMedia" +socialMedia)
- //FacebookC.crawler("sdds","sdsd","sdsds");
+ FacebookC.crawler("sdds","sdsd","sdsds");
  res.json({validationSucess:"true"});
 
 });
