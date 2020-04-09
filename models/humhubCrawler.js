@@ -129,7 +129,6 @@ async function crawler(username, url) {
           var commentTimeContainer = await commentsContainer[i].findElements(By.css(".time"));
           var headersContainer = await commentsContainer[i].findElements(By.css(".media-heading"));
           var commentContentContainer = await commentsContainer[i].findElements(By.css(".content.comment_edit_content"));
-          console.log(typeof commentsContainer[i]);
           // The title contains both the time and the username so it splits and saves separately
           var commentContent = await commentContentContainer[0].getText();
           var tempheader = await headersContainer[0].getText();

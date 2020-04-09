@@ -34,8 +34,6 @@ db.on('error', console.error.bind(console, 'connection error:'));
 
 db.once('open', async function() {
 try {
-  console.log("ff")
-
         const {
           Builder,
           Key,
@@ -81,7 +79,6 @@ try {
         element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[2]/div/div[2]/form/div[2]/input'));
         await element.sendKeys(newPassword, Key.RETURN);      
         await driver.sleep(2000);
-        console.log("4444")
 
          // craet new user schema
         var newUser = new avatar({
@@ -92,11 +89,9 @@ try {
             creatTime:creatTime
             });
           
-            console.log("123")
 
           // save schema to db
           await newUser.save(function (err) {
-            console.log("return")
             if (err) return console.error(err);
             db.close();
           });
