@@ -2,6 +2,22 @@ var profile = require('./profile');
 var crawlingRequests = require('./crawlingRequests');
 var reset = require('./resetCrawlingReq');
 var post = require('./post');
+
+
+function convertUTCDateToLocalDate(date) {
+  var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+
+  var offset = date.getTimezoneOffset() / 60;
+  var hours = date.getHours();
+
+  newDate.setHours(hours - offset);
+
+  return newDate;   
+}
+
+var utcDate =  new Date;
+var crawlingTime = convertUTCDateToLocalDate(utcDate);
+
 async function crawler(username, url,socialMedia) {
   try {
     //update db -  start crawling
