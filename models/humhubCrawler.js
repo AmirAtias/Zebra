@@ -10,17 +10,17 @@ function convertUTCDateToLocalDate(date) {
   return newDate;   
 }
 
-
 var utcDate =  new Date;
 var crawlingTime = convertUTCDateToLocalDate(utcDate);
 
-var facebookSchema = require('./facebookPosts');
+
+var profile = require('./profile');
 var crawlingRequests = require('./crawlingRequests');
 var reset = require('./resetCrawlingReq');
 var post = require('./post');
-async function crawler(username, url) {
-    const socialMedia = "humhub"
 
+async function crawler(username, url) {
+  const socialMedia = "humhub"
   try {
     //update db -  start crawling
 
@@ -33,11 +33,12 @@ async function crawler(username, url) {
     await crawlingRequests.findOneAndUpdate(filter, update, {
       upsert: true
     });
-    var Facebookposts = new facebookSchema({
-      facebookUserName: username,
+    var profilePost = new profile({
       url: url,
-      socialMedia: socialMedia
+      userName: username,
+      socialMedia: socialMedia,
     });
+
     const {
       Builder,
       Key,
@@ -56,15 +57,12 @@ async function crawler(username, url) {
       .setFirefoxOptions(firefoxOptions)
       .build();
 
-    await driver.get('https://guyandamir-sn.humhub.com/dashboard');
+    await driver.get('https://guyandamir-sn.humhub.com/user/auth/login');
     await driver.sleep(10000);
 
-    //init login data
-    element = await (await driver.findElement(By.xpath('//*[@id="h927114w3"]'))).click;
-    await driver.sleep(3000);
-    element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[1]/div/div/form/div/div[1]/input'));
+    element = await driver.findElement(By.xpath('//*[@id="login_username"]'));
     await element.sendKeys('guyamir');
-    element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[1]/div/div/form/div/div[2]/input'));
+    element = await driver.findElement(By.xpath('//*[@id="login_password"]'));
     await element.sendKeys('15293amirh', Key.RETURN);
     setTimeout(function () {}, 3000);
 
@@ -76,7 +74,7 @@ async function crawler(username, url) {
     await (driver).executeScript("window.scrollTo(0, document.body.scrollHeight);");
     await driver.sleep(2000);
 
-    var className = ".sc-gqPbQI.hcaOkx";
+    var className = ".wall-entry";
     var allPosts = await driver.findElements(By.css(className));
     var numberOfPosts = allPosts.length;
     //Scrolls to the bottom
@@ -99,30 +97,57 @@ async function crawler(username, url) {
     await driver.executeScript("arguments[0].scrollIntoView(false);", allPosts[0]); //  scrolling to top
     for (let index = 0; index < allPosts.length; index++) {
       const element = allPosts[index];
-      var postHeader = await element.findElements(By.css(".sc-iujRgT.eHHHfk"));
-      var date = await element.findElements(By.css(".sc-bMVAic.ddJtUJ"));
-      var postContentContainer = await element.findElements(By.css(".sc-jzJRlG.fkPtct"));
-      var postContent;
+      var tempPostHeader1 = await element.findElements(By.css(".media-heading"));
+      var tempPostHeader2 = await tempPostHeader1[0].getText();
+
+      var postHeader = tempPostHeader2.split("PUBLIC");
+
+      var date = await element.findElements(By.css(".media-subheading"));
+      var postContentContainer = await element.findElements(By.css(".content"));
+        
       if (postContentContainer.length > 0) //handle post content
         postContent = await postContentContainer[0].getText();
       else
         postContent = "";
-      var commentsButton = await element.findElements(By.css(".sc-ifAKCX.sc-lkqHmb.hdufcJ"));
-      await commentsButton[0].click();
+      if   (await element.findElements(By.css(".show.show-all-link")) != 0){
+          var commentsButton = await element.findElements(By.css(".show.show-all-link"));
+          await commentsButton[0].click();
+      }
+    
       await driver.sleep(1000);
-      var commentsContainer = await element.findElements(By.css(".sc-kfGgVZ.hcILRE"));
+
+      var commentsContainer = await element.findElements(By.css(".media"));
+     
       await driver.sleep(1000);
-      var tempCommentsArr = [];
-      if (commentsContainer.length > 0) { //check if the post contian comments
+      var commentsArray = [];
+      if (commentsContainer.length > 1) { //check if the post contian comments
         await driver.sleep(1000);
-        for (e of commentsContainer) {
-          tempCommentsArr.push(await e.getText());
+        // guyyyyyyy
+        
+        for (i = 1; i < commentsContainer.length; i++) {
+
+          var commentTimeContainer = await commentsContainer[i].findElements(By.css(".time"));
+          var headersContainer = await commentsContainer[i].findElements(By.css(".media-heading"));
+          var commentContentContainer = await commentsContainer[i].findElements(By.css(".content.comment_edit_content"));
+          console.log(typeof commentsContainer[i]);
+          // The title contains both the time and the username so it splits and saves separately
+          var commentContent = await commentContentContainer[0].getText();
+          var tempheader = await headersContainer[0].getText();
+          var commentTime = await commentTimeContainer[0].getText();
+
+          var commentheader = tempheader.split(commentTime);
+        
+          //Saves in the json array all important parameters associated with each post response
+          commentsArray.push({"commentHeader":commentheader[0],
+          "commentContent": commentContent,
+          "commentTime":commentTime});
         }
+
         var tempPost = new post({
-          postHeader: await postHeader[0].getText(),
+          postHeader:  postHeader[0],
           postContent: postContent,
-          comments: tempCommentsArr,
-          postTime: await date.getText(),
+          comments: commentsArray,
+          postTime: await date[0].getText(),
           crawlingTime: crawlingTime
 
         });
@@ -130,19 +155,19 @@ async function crawler(username, url) {
       }
       else {
         var tempPost = new post({
-          postHeader: await postHeader[0].getText(),
+          postHeader:  postHeader[0],
           postContent: postContent,
           comments: [],
-          postTime: await date.getText(),
+          postTime: await date[0].getText(),
           crawlingTime: crawlingTime
         });
       }
       await tempPost.save();
-      Facebookposts.posts.push(tempPost);
+      profilePost.posts.push(tempPost);
       await driver.executeScript("arguments[0].scrollIntoView(false);", allPosts[index]);
       await driver.sleep(1000);
     }
-    Facebookposts.save(function (err, result) {
+    profilePost.save(function (err, result) {
       if (err) {
         console.log(err.message)
       } else {
@@ -150,12 +175,11 @@ async function crawler(username, url) {
       }
     });
 
-    reset.resetWorldExplorer();
-  } catch (error) { //reset worldExplorer request in case there is error
+    reset.resetHumHub();
+  } catch (error) { //reset HumHub request in case there is error
     console.log(error);
-    reset.resetWorldExplorer();
+    reset.resetHumHub();
   }
-
 }
 module.exports.crawler = crawler;
 

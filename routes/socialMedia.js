@@ -19,18 +19,6 @@ router.post('/startCrawling', function (req, res, next) {
 
 });
 
-router.get('/worldExplorer', function (req, res, next) {
-  res.render("worldExplorer");
-  });
-  
-router.post('/worldExplorer', function (req, res, next) {
-    var UserName=req.body.userName;
-    var Url=req.body.url;
-   // worldExplorerC.crawler(UserName,Url);
-    worldExplorerC.crawler(UserName,Url);
-
-    res.redirect('/')
-  });
 
 //get all posts of  user
 router.get('/allposts', async function (req, res, next) {
