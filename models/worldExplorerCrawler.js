@@ -148,6 +148,5 @@ async function crawler(username, url) {
     console.log(error);
     reset.resetWorldExplorer();
   }
-
-}
+}}
 module.exports.crawler = crawler;
