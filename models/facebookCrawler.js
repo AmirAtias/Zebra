@@ -10,8 +10,9 @@ async function crawler(username, url,socialMedia) {
     await crawlingRequests.findOneAndUpdate(filter, update, {
       upsert: true
     });
+    reqStatus=true;
     var Facebookposts = new profile({
-      userName: "pazit atias",
+      userName: "ani atias",
       url: "https://www.facebook.com/profile.php?id=100001660335679",
       socialMedia:"facebook"
     });

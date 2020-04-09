@@ -28,7 +28,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors()) 
 resetReq.resetCrawlingReq();
-app.use(async function(req, res, next){
+global.reqStatus=false;
+/*app.use(async function(req, res, next){
   var exists=false
  await  crawlingReq.find({socialMedia:"facebook"},function (err, doc){
     if(err){
@@ -59,7 +60,7 @@ await  crawlingReq.find({socialMedia:"worldExplorer"},function (err, doc){
 }  
   next();
   });
-
+*/
 app.use('/socialMedia',socialMedia)
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
