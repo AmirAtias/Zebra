@@ -1,5 +1,5 @@
 
-  async function crawler(username, url,socialNetwork) {
+  async function checkURL(username, url,socialNetwork) {
     try {
      
       const {
