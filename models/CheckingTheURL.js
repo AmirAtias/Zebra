@@ -73,5 +73,4 @@
     }
   }
   
-  crawler("itai levi", "https://guyandamir-sn.humhub.com/u/itai/","humhub")
-  crawler("oshri", "http://localhost:3000/oshri","worldExplorer")
+
