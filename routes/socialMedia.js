@@ -7,6 +7,7 @@ var posts=require('../models/post');
 var mongoose=require('mongoose');
 var router = express.Router();
 var app=require("../app");
+const withAuth = require('./middleware')
 router.get('/requestStatus',async function(req, res, next){
     if(reqStatus){
       res.json({handleRequest:true})
@@ -16,7 +17,7 @@ router.get('/requestStatus',async function(req, res, next){
 
     }
   });
-router.post('/startCrawling', function (req, res, next) {
+router.post('/startCrawling',withAuth, function (req, res, next) {
   var UserName=req.body.userName;
 	var Url=req.body.url;
 	var socialMedia=req.body.socialMedia
@@ -29,7 +30,7 @@ router.post('/startCrawling', function (req, res, next) {
 
 
 //get all posts of  user
-router.get('/allposts', async function (req, res, next) {
+router.get('/allposts',withAuth, async function (req, res, next) {
   profile
   .findOne({userName:req.query.userName ,socialMedia:req.query.socialMedia}).populate('posts').exec( function(err,doc){
     if(err){
@@ -45,7 +46,7 @@ router.get('/allposts', async function (req, res, next) {
 
   
 
-  router.get('/filterPosts', async function (req, res, next) {
+  router.get('/filterPosts',withAuth, async function (req, res, next) {
 	 
 		profile.findOne({userName:req.query.userName ,socialMedia:req.query.socialMedia}).populate({path: 'posts',
     match: { postContent:{"$regex": req.query.filter, "$options": "i"}}}).exec( function(err,doc){
@@ -58,7 +59,7 @@ router.get('/allposts', async function (req, res, next) {
       }
       });
     });
-    router.get('/displayAllUsers', async function (req, res, next) {
+    router.get('/displayAllUsers',withAuth, async function (req, res, next) {
       profile.find({socialMedia:req.query.socialMedia}).exec( function(err,doc){
         var arrOfAllUserName = [];
           if(err){
@@ -74,7 +75,7 @@ router.get('/allposts', async function (req, res, next) {
        
         });
       });
-    router.post('/saveResults', async function (req, res, next) {
+    router.post('/saveResults',withAuth, async function (req, res, next) {
    profile
     .findOne({userName:req.body.userName,socialMedia:req.body.socialMedia}).populate({path: 'posts',
       match: { postContent:{"$regex": req.body.filter, "$options": "i"}}}).exec( async function(err,doc){

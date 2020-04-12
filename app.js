@@ -24,11 +24,16 @@ app.set('view engine', '.hbs');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cors()) 
+app.use(cors({
+  origin: 'http://localhost:3000', 
+  credentials: true,
+}));
+app.use(cookieParser());
+
 resetReq.resetCrawlingReq();
 global.reqStatus=false;
+global.userName="";
 /*app.use(async function(req, res, next){
   var exists=false
  await  crawlingReq.find({socialMedia:"facebook"},function (err, doc){
