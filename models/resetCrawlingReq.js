@@ -4,6 +4,7 @@ var update = { requestHandling: false };
 async function resetCrawlingReq(){
     resetFacebook();
     resetWorldExplorer();
+    resetHumHub();
  
 }
 
@@ -21,6 +22,12 @@ async function resetWorldExplorer(){
      reqStatus=false;
 
 }
+async function resetHumHub(){
+    await crawlingRequests.findOneAndUpdate({socialMedia: "humhub"}, update,{
+        upsert: true
+      });
+}
 module.exports.resetCrawlingReq=resetCrawlingReq;
 module.exports.resetFacebook=resetFacebook;
 module.exports.resetWorldExplorer=resetWorldExplorer;
+module.exports.resetHumHub=resetHumHub;

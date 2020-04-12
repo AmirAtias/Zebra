@@ -2,6 +2,22 @@ var profile = require('./profile');
 var crawlingRequests = require('./crawlingRequests');
 var reset = require('./resetCrawlingReq');
 var post = require('./post');
+
+
+function convertUTCDateToLocalDate(date) {
+  var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+
+  var offset = date.getTimezoneOffset() / 60;
+  var hours = date.getHours();
+
+  newDate.setHours(hours - offset);
+
+  return newDate;   
+}
+
+var utcDate =  new Date;
+var crawlingTime = convertUTCDateToLocalDate(utcDate);
+
 async function crawler(username, url,socialMedia) {
   try {
     //update db -  start crawling
@@ -53,9 +69,9 @@ async function crawler(username, url,socialMedia) {
     await driver.manage().window().maximize();
     var existed = false;
 
-    while (!existed) { // load all hidden posts
-      existed = await driver.findElement(By.css(".img.sp_dPnsHOPzupp.sx_0f6785")).then(function () {
-        return true;// existed
+    while (!existed) { // load all hidden posts 
+      existed = await driver.findElement(By.css("._2pid._2pin._52jv")).then(function () {
+        return true;//it existed
       }, function (err) {
         if (err.name === "NoSuchElementError") {
           driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");//keep scrolling
@@ -89,6 +105,7 @@ async function crawler(username, url,socialMedia) {
           await showMoreButton[0].click();
 
         var postHeader = await element.findElements(By.css("._6a._5u5j._6b"));
+        var postTime = await element.findElements(By.css(".timestampContent"));
         var postContentContainer = await element.findElements(By.css("._5pbx.userContent._3576"));
         var postContent;
         if (postContentContainer.length > 0)//handle post content
@@ -123,13 +140,15 @@ async function crawler(username, url,socialMedia) {
           var tempPost = new post({
             postHeader: await postHeader[0].getText(),
             postContent: postContent,
-            comments: tempCommentsArr
+            comments: tempCommentsArr,
+            postTime: await postTime[0].getText(),
+            crawlingTime: crawlingTime
+
           });
 
           await tempPost.save();
           
           Facebookposts.posts.push(tempPost);
-
 
 
 
@@ -139,7 +158,9 @@ async function crawler(username, url,socialMedia) {
           var tempPost = new post({
             postHeader: await postHeader[0].getText(),
             postContent: postContent,
-            comments: []
+            comments: [],
+            postTime: await postTime[0].getText(),
+            crawlingTime: crawlingTime
           });
 
           await tempPost.save();
