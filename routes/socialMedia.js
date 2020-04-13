@@ -5,8 +5,8 @@ var crawlingReq=require('../models/crawlingRequests');
 var profile=require('../models/profile');
 var posts=require('../models/post');
 var mongoose=require('mongoose');
+var humHubC=require("../models/humhubCrawler")
 var router = express.Router();
-var app=require("../app");
 const withAuth = require('./middleware')
 router.get('/requestStatus',async function(req, res, next){
     if(reqStatus){
@@ -23,7 +23,7 @@ router.post('/startCrawling',withAuth, function (req, res, next) {
 	var socialMedia=req.body.socialMedia
 	//validate url and username
 	console.log("username:"+UserName+" url" +Url +"socialMedia" +socialMedia)
- FacebookC.crawler("sdds","sdsd","sdsds");
+  humHubC.crawler("guy habert","https://guyandamir-sn.humhub.com/u/guyamir/");
  res.json({validationSucess:"true"});
 
 });

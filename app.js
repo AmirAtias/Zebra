@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({
-  origin: 'http://localhost:3000', 
+  origin: 'http://localhost:4000', 
   credentials: true,
 }));
 app.use(cookieParser());
@@ -34,38 +34,6 @@ app.use(cookieParser());
 resetReq.resetCrawlingReq();
 global.reqStatus=false;
 global.userName="";
-/*app.use(async function(req, res, next){
-  var exists=false
- await  crawlingReq.find({socialMedia:"facebook"},function (err, doc){
-    if(err){
-      console.log(err)
-    }
-    if(doc[0].requestHandling){
-      app.locals.reqStatus=doc[0].requestHandling;
-      exists=true;
-    }  
-  });
-if(!exists){
-await  crawlingReq.find({socialMedia:"worldExplorer"},function (err, doc){
-    if(err){
-      console.log(err)
-    }
-    
-    if(doc[0].requestHandling){
-      
-      app.locals.reqStatus=doc[0].requestHandling;
-      exists=true;
-
-    }
-  });
-  if(!exists){
-    app.locals.reqStatus=false;
-  }
-
-}  
-  next();
-  });
-*/
 app.use('/socialMedia',socialMedia)
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
