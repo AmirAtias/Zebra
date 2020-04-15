@@ -1,18 +1,13 @@
 
 function convertUTCDateToLocalDate(date) {
   var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
-
   var offset = date.getTimezoneOffset() / 60;
   var hours = date.getHours();
-
   newDate.setHours(hours - offset);
-
   return newDate;   
 }
-
 var utcDate =  new Date;
 var crawlingTime = convertUTCDateToLocalDate(utcDate);
-
 
 var profile = require('./profile');
 var crawlingRequests = require('./crawlingRequests');
@@ -67,7 +62,6 @@ async function crawler(username, url) {
     setTimeout(function () {}, 3000);
 
     await driver.sleep(2000);
-
     await driver.get(url);
     await driver.manage().window().maximize();
     await driver.sleep(2000);
@@ -101,7 +95,6 @@ async function crawler(username, url) {
       var tempPostHeader2 = await tempPostHeader1[0].getText();
 
       var postHeader = tempPostHeader2.split("PUBLIC");
-
       var date = await element.findElements(By.css(".media-subheading"));
       var postContentContainer = await element.findElements(By.css(".content"));
         
@@ -115,9 +108,7 @@ async function crawler(username, url) {
       }
     
       await driver.sleep(1000);
-
       var commentsContainer = await element.findElements(By.css(".media"));
-     
       await driver.sleep(1000);
       var commentsArray = [];
       if (commentsContainer.length > 1) { //check if the post contian comments
