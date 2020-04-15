@@ -8,8 +8,9 @@ const config = require('config');
 const secret= config.get('jwt.secret');
 const withAuth = require('./middleware')
 const jwt = require('jsonwebtoken');
-
+var Logger = require('logdna');
 router.post('/signup', (req, res, next) => {
+  global.logger.log('test', { level: 'Warn'});
   const { body } = req;
   const {
     password
@@ -25,26 +26,30 @@ router.post('/signup', (req, res, next) => {
     lastName
   } = body;
   if (!firstName) {
-    return res.send({
+    global.logger.info('first name cannot be blank.')
+    return res.status(200).send({
       success: false,
       message: 'Error: first name cannot be blank.'
     });
   }
     if (!lastName) {
-      return res.send({
+      global.logger.info('last name cannot be blank.')
+      return res.status(200).send({
         success: false,
         message: 'Error: last name cannot be blank.'
       });
     
   }
   if (!email) {
-    return res.send({
+    global.logger.info('Email cannot be blank.')
+    return res.status(200).send({
       success: false,
       message: 'Error: Email cannot be blank.'
     });
   }
   if (!password) {
-    return res.send({
+    global.logger.info('Password cannot be blank.')
+    return res.status(200).info({
       success: false,
       message: 'Error: Password cannot be blank.'
     });
@@ -53,7 +58,8 @@ router.post('/signup', (req, res, next) => {
   email = email.toLowerCase();
   email = email.trim();
   if(!validator.validate(email)){
-    return res.send({
+    global.logger.info('invalid email address.', {meta: {email:email}})
+    return res.status(200).send({
       success: false,
       message: 'Error: invalid email address.'
     });
@@ -65,12 +71,14 @@ router.post('/signup', (req, res, next) => {
     email: email
   }, (err, previousUsers) => {
     if (err) {
-      return res.send({
+      global.logger.error("error when trying to find user from database", {meta: {err: err.message}})
+      return res.status(500).send({
         success: false,
         message: 'Error: Server error'
       });
     } else if (previousUsers.length > 0) {
-      return res.send({
+      global.logger.info('Account already exist.',{meta: {email:email}})
+      return res.status(200).send({
         success: false,
         message: 'Error: Account already exist.'
       });
@@ -83,12 +91,14 @@ router.post('/signup', (req, res, next) => {
     newUser.password = newUser.generateHash(password);
     newUser.save((err, user) => {
       if (err) {
-        return res.send({
+        global.logger.error("error when trying to save user to database", {meta: {err: err.message}})
+        return res.status(500).send({
           success: false,
           message: 'Error: Server error'
         });
       }
-      return res.send({
+      global.logger.info("Signed up",{meta:{user:newUser}})
+      return res.status(200).send({
         success: true,
         message: 'Signed up'
       });
@@ -106,13 +116,15 @@ router.post('/signin',async function(req, res, next){
     email
   } = body;
   if (!email) {
-    return res.send({
+    global.logger.info('Email cannot be blank.')
+    return res.status(200).send({
       success: false,
       message: 'Error: Email cannot be blank.'
     });
   }
   if (!password) {
-    return res.send({
+    global.logger.info(' Password cannot be blank.')
+    return res.status(200).send({
       success: false,
       message: 'Error: Password cannot be blank.'
     });
@@ -124,21 +136,23 @@ router.post('/signin',async function(req, res, next){
     email: email
   }, (err, users) => {
     if (err) {
-      console.log('err 2:', err);
-      return res.send({
+      global.logger.error("error when trying to find user from database", {meta: {err: err.message}})
+      return res.status(500).send({
         success: false,
         message: 'Error: server error'
       });
     }
     if (users.length != 1) {
-      return res.send({
+      global.logger.info("email doesn't exist",{meta:{email:email}})
+      return res.status(200).send({
         success: false,
         message: "email doesn't exist"
       });
     }
     user = users[0];
     if (!user.validPassword(password)) {
-      return res.send({
+      global.logger.info('Error: Invalid password')
+      return res.status(200).send({
         success: false,
         message: 'Error: Invalid password'
       });
@@ -152,8 +166,8 @@ router.post('/signin',async function(req, res, next){
        expiresIn: '1h'
      });
      global.userName=user.firstName;
-     console.log(token)
-     res.cookie('token', token, { httpOnly: true }).send({
+     global.logger.info('success to sign in',{meta:{email:email}})
+     res.status(200).cookie('token', token, { httpOnly: true }).send({
         success: true,
         message: 'success to sign in',
         userName:user.firstName
@@ -167,6 +181,7 @@ router.get('/checkToken', withAuth, function(req, res) {
 });
 router.get('/logout', withAuth, function(req, res) {
   global.userName="";
+  global.logger.info("Logout successful")
   res.clearCookie('token').sendStatus(200);
 
 });
