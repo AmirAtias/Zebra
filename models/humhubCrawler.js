@@ -113,10 +113,8 @@ async function crawler(username, url) {
       var commentsArray = [];
       if (commentsContainer.length > 1) { //check if the post contian comments
         await driver.sleep(1000);
-        // guyyyyyyy
-        
-        for (i = 1; i < commentsContainer.length; i++) {
 
+        for (i = 1; i < commentsContainer.length; i++) {
           var commentTimeContainer = await commentsContainer[i].findElements(By.css(".time"));
           var headersContainer = await commentsContainer[i].findElements(By.css(".media-heading"));
           var commentContentContainer = await commentsContainer[i].findElements(By.css(".content.comment_edit_content"));
@@ -139,9 +137,7 @@ async function crawler(username, url) {
           comments: commentsArray,
           postTime: await date[0].getText(),
           crawlingTime: crawlingTime
-
         });
-      
       }
       else {
         var tempPost = new post({
