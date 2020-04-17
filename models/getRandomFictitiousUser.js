@@ -8,7 +8,7 @@ var url = "mongodb://localhost:27017/";
 MongoClient.connect(url, function(err, db) {
   if (err) throw err;
   var dbo = db.db("dirtyDB");
-  dbo.collection("avatars").find({}).toArray(function(err, arrOfAvatars) {
+  var avatar = dbo.collection("avatars").find({}).toArray(function(err, arrOfAvatars) {
     if (err) throw err;
     numberOfRandomAvatar = randomInt(0,arrOfAvatars.length) 
     var selectedAvatar = arrOfAvatars[numberOfRandomAvatar];
@@ -17,4 +17,5 @@ MongoClient.connect(url, function(err, db) {
     db.close();
     return selectedAvatar;
   });
+  return avatar;
 });

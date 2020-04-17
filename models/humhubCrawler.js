@@ -95,6 +95,7 @@ async function crawler(username, url) {
       var tempPostHeader2 = await tempPostHeader1[0].getText();
 
       var postHeader = tempPostHeader2.split("PUBLIC");
+
       var date = await element.findElements(By.css(".media-subheading"));
       var postContentContainer = await element.findElements(By.css(".content"));
         
