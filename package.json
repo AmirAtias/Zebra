@@ -19,6 +19,7 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.5.1",
+    "logdna": "^3.5.0",
     "mongoose": "^5.7.12",
     "morgan": "~1.9.1",
     "selenium-webdriver": "^4.0.0-alpha.5"

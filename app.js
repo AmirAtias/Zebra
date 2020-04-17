@@ -11,17 +11,31 @@ var crawlingReq=require('./models/crawlingRequests');
 var resetReq=require('./models/resetCrawlingReq');
 var mongoose=require('mongoose');
 var cors = require('cors')
-
+const config = require('config');
+const logdna= config.get('logdna');
+var Logger = require('logdna');
+var options = {
+    hostname: logdna.hostname,
+    ip: logdna.ip,
+    app: logdna.app }
+options.index_meta = true;
+options.tags = ['logging', 'nodejs', 'logdna'];
+global.logger = Logger.createLogger(logdna.apikey, options);
 mongoose.set('useFindAndModify', false);
 var app = express();
 mongoose.connect('mongodb://localhost:27017/dirtyDB',{useNewUrlParser: true});
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+db.on('error', function(err){
+  global.logger.error(err);
+});
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', expressHbs({defaultLayout: 'layout', extname: '.hbs'}));
 app.set('view engine', '.hbs');
-app.use(logger('dev'));
+app.use(logger('dev',{skip: function (req, res) { return res.statusCode === 304 ||req.url ==='/sendLogs'}
+,stream:{write:function(str){
+  global.logger.log(str,{ level: 'Info'})
+}} }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -46,10 +60,7 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  global.logger.error(err.message)
   // render the error page
   res.status(err.status || 500);
   res.render('error');
