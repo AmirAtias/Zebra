@@ -5,7 +5,8 @@ var crawlingReq=require('../models/crawlingRequests');
 var profile=require('../models/profile');
 var posts=require('../models/post');
 var mongoose=require('mongoose');
-var humHubC=require("../models/humhubCrawler")
+var humHubC=require("../models/humhubCrawler");
+var getTop5Arr = require("../models/top5Connections")
 var router = express.Router();
 const withAuth = require('./middleware')
 router.get('/requestStatus',async function(req, res, next){
@@ -23,7 +24,7 @@ router.post('/startCrawling',withAuth, function (req, res, next) {
 	var socialMedia=req.body.socialMedia
 	//validate url and username
 	console.log("username:"+UserName+" url" +Url +"socialMedia" +socialMedia)
-  humHubC.crawler("guy habert","https://guyandamir-sn.humhub.com/u/guyamir/");
+  worldExplorerC.crawler("guy hum hub","https://guyandamir-sn.humhub.com/u/guyamir/");
  res.json({validationSucess:"true"});
 
 });
@@ -83,7 +84,8 @@ router.get('/allposts',withAuth, async function (req, res, next) {
           console.log(err);
         }
         else{
-         await mongoose.disconnect();
+          var top5Connections =  await getTop5Arr.getTop5connections(doc);
+          await mongoose.disconnect();
           await mongoose.connect('mongodb://localhost:27017/CleanDB',{useNewUrlParser: true});
           for(post of doc.posts){
             post._id = mongoose.Types.ObjectId();
@@ -92,7 +94,8 @@ router.get('/allposts',withAuth, async function (req, res, next) {
           }
           doc._id = mongoose.Types.ObjectId();
           doc.isNew = true; //<--------------------IMPORTANT
-          doc.filter=req.body.filter
+          doc.filter=req.body.filter;
+          doc.bestConnections = top5Connections;
           await doc.save();
           await mongoose.disconnect();
           await mongoose.connect('mongodb://localhost:27017/dirtyDB',{useNewUrlParser: true});

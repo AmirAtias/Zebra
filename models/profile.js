@@ -5,7 +5,8 @@ var profileSchema = new Schema({
         userName:{type:String,required:true},
         posts:[{type:Schema.Types.ObjectId,ref:'Post'}],
         filter:{type:String},
-        socialMedia:{type:String,required:true}
+        socialMedia:{type:String,required:true},
+        bestConnections:[String]
 });
 
 module.exports=mongoose.model('Profile',profileSchema);
