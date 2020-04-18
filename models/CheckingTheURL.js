@@ -19,20 +19,19 @@
         .build();
   
       var currentUsername = "";
-     // await driver.get(url);
       if(socialNetwork == "humhub"){
+        console.log("guyy hum hubbb");
         await driver.get('https://guyandamir-sn.humhub.com/user/auth/login');
         await driver.sleep(10000);
-    
+        // get user from db
         element = await driver.findElement(By.xpath('//*[@id="login_username"]'));
         await element.sendKeys('guyamir');
         element = await driver.findElement(By.xpath('//*[@id="login_password"]'));
         await element.sendKeys('15293amirh', Key.RETURN);
-        
         await driver.sleep(4000);
         await driver.get(url);
         await driver.sleep(2000);
-        element = await driver.findElement(By.css('.panel-profile-header'));
+        element = await driver.findElement(By.css('.profile'));
         currentUsername = await element.getText()
         console.log(currentUsername)
       }
@@ -59,17 +58,13 @@
      else { 
          console.log("This social network cannot be used with this software")
          currentUsername = "";
-     } 
-     if (currentUsername == username ){
-       console.log(true);
      }
-     else{
-      console.log(false);
 
-     }
+     return (currentUsername === username);
   
-    } catch (error) { //reset HumHub request in case there is error
+    } catch (error) { 
       console.log(error);
+      return false;
     }
   }
   

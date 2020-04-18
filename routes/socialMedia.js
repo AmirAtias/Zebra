@@ -6,6 +6,7 @@ var mongoose=require('mongoose');
 var humHubC=require("../models/humhubCrawler");
 var getTop5Arr = require("../models/top5Connections")
 var router = express.Router();
+var checkURL = require("../models/CheckingTheURL")
 const withAuth = require('./middleware')
 router.get('/requestStatus',async function(req, res, next){
     if(reqStatus){
@@ -16,15 +17,24 @@ router.get('/requestStatus',async function(req, res, next){
 
     }
   });
-router.post('/startCrawling',withAuth, function (req, res, next) {
-  var UserName=req.body.userName;
-	var Url=req.body.url;
-	var socialMedia=req.body.socialMedia
-	//validate url and username
-	console.log("username:"+UserName+" url" +Url +"socialMedia" +socialMedia)
-  worldExplorerC.crawler("guy hum hub","https://guyandamir-sn.humhub.com/u/guyamir/");
- res.json({validationSucess:"true"});
-
+router.post('/startCrawling',withAuth, async function (req, res, next) {
+  var userName= await req.body.userName;
+	var url= await req.body.url;
+  var socialMedia= await req.body.socialMedia
+  //validate url and username
+  if(await checkURL.checkURL(userName,url,"humhub")){
+  console.log("username123:"+userName+" url" +url +"socialMedia" +socialMedia);
+  if (await socialMedia == "Facebook"){
+    await FacebookC(userName,url)
+  }
+  else if(await socialMedia == "WorldExplorer"){
+     await worldExplorerC.crawler(userName,url);
+  }
+  else if(await socialMedia == "Humhub"){
+    await humHubC.crawler(userName,url);
+  }
+  res.json({validationSucess:"true"});
+ }
 });
 
 
