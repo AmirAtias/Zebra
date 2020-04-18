@@ -55,7 +55,7 @@ async function WorldExplorerCrawler(username, url) {
     await driver.sleep(10000);
 
     element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[1]/div/div/form/div/div[1]/input'));
-
+// need to add get user from db to login
     await element.sendKeys('oshri@gmail.com');
     element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[1]/div/div/form/div/div[2]/input'));
     await element.sendKeys('123456789', Key.RETURN);

@@ -55,6 +55,8 @@ async function crawler(username, url) {
     await driver.get('https://guyandamir-sn.humhub.com/user/auth/login');
     await driver.sleep(10000);
 
+    // need to add get user from db to login
+
     element = await driver.findElement(By.xpath('//*[@id="login_username"]'));
     await element.sendKeys('guyamir');
     element = await driver.findElement(By.xpath('//*[@id="login_password"]'));
