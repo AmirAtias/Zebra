@@ -22,7 +22,7 @@ router.post('/startCrawling',withAuth, function (req, res, next) {
 	var socialMedia=req.body.socialMedia
 	//validate url and username
 	console.log("username:"+UserName+" url" +Url +"socialMedia" +socialMedia)
-  worldExplorerC.crawler("guy hum hub","https://guyandamir-sn.humhub.com/u/guyamir/");
+  humHubC.crawler("guy hum hub","https://guyandamir-sn.humhub.com/u/guyamir/");
  res.json({validationSucess:"true"});
 
 });
@@ -55,7 +55,7 @@ router.get('/allposts',withAuth, async function (req, res, next) {
         res.sendStatus(500);
       }
       else{
-        res.status(200).json({allPosts:doc.posts});
+        res.status(200).json({allPosts:doc.posts,connections:doc.bestConnections});
       }
    
          });
