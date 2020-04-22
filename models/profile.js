@@ -6,6 +6,7 @@ var profileSchema = new Schema({
         posts:[{type:Schema.Types.ObjectId,ref:'Post'}],
         filter:{type:String},
         socialMedia:{type:String,required:true},
+        crawlingTime: {type:String},
         bestConnections:[String]
 });
 
