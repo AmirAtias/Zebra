@@ -35,6 +35,9 @@ router.post('/startCrawling',withAuth, async function (req, res, next) {
   }
   res.json({validationSucess:"true"});
  }
+ else{
+  res.json({validationSucess:"false",message:"The username or url is incorrect.Please change them and try again."});
+ }
 });
 
 
