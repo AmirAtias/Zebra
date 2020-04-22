@@ -68,7 +68,7 @@ router.get('/allposts',withAuth, async function (req, res, next) {
         res.sendStatus(500);
       }
       else{
-        res.status(200).json({allPosts:doc.posts});
+        res.status(200).json({allPosts:doc.posts,connections:doc.bestConnections});
       }
    
          });
