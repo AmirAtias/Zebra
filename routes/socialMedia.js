@@ -27,22 +27,29 @@ router.post('/startCrawling',withAuth, function (req, res, next) {
 
 });
 
-
+//here-done
 //get all posts of  user
 router.get('/allposts',withAuth, async function (req, res, next) {
+  console.log(req.query.user);
   profile
-  .findOne({userName:req.query.userName ,socialMedia:req.query.socialMedia}).populate('posts').exec( function(err,doc){
+  .findOne({userName:req.query.user.userName,crawlingTime:req.query.user.crawlingTime ,socialMedia:req.query.socialMedia}).populate('posts').exec( function(err,doc){
     if(err){
       global.logger.error("error when trying to find user from database", {meta: {err: err.message}})
       res.json({allPosts:[]})
     }
     else{
-      res.json({allPosts:doc.posts});
+      console.log(doc)
+      if(doc==null){
+        res.json({allPosts:[]});
+      }
+      else{
+        res.json({allPosts:doc.posts})
+      }
     }
  
        });
   });
-
+ //here
   router.get('/getSavedPosts',withAuth, async function (req, res, next) {
     await mongoose.disconnect();
     await mongoose.connect('mongodb://localhost:27017/CleanDB',{useNewUrlParser: true});
@@ -62,10 +69,9 @@ router.get('/allposts',withAuth, async function (req, res, next) {
     });
 
   
-
+  //here-done
   router.get('/filterPosts',withAuth, async function (req, res, next) {
-	 
-		profile.findOne({userName:req.query.userName ,socialMedia:req.query.socialMedia}).populate({path: 'posts',
+		profile.findOne({userName:req.query.user.userName,crawlingTime:req.query.user.crawlingTime,socialMedia:req.query.socialMedia}).populate({path: 'posts',
     match: { postContent:{"$regex": req.query.filter, "$options": "i"}}}).exec( function(err,doc){
       
       if(err){
@@ -78,6 +84,8 @@ router.get('/allposts',withAuth, async function (req, res, next) {
       
       });
     });
+
+    //done
     router.get('/displayAllUsers',withAuth, async function (req, res, next) {
       if(req.query.cleanDb=="true"){
         await mongoose.disconnect();
@@ -96,7 +104,7 @@ router.get('/allposts',withAuth, async function (req, res, next) {
           }
           else{
             doc.forEach(function(user) {
-              setOfAllUsers.add(user.userName);
+              setOfAllUsers.add({userName:user.userName,crawlingTime:user.crawlingTime});
             });
             }
             var arrOfAllUserName = [...setOfAllUsers];
@@ -105,7 +113,7 @@ router.get('/allposts',withAuth, async function (req, res, next) {
        
         });
       });
-    
+    //here
     router.get('/getAllFilters',withAuth,async function (req, res, next) {
       await mongoose.disconnect();
       await mongoose.connect('mongodb://localhost:27017/CleanDB',{useNewUrlParser: true});
@@ -129,9 +137,10 @@ router.get('/allposts',withAuth, async function (req, res, next) {
        
         });
     });
+    //done
     router.post('/saveResults',withAuth, async function (req, res, next) {
-   profile
-    .findOne({userName:req.body.userName,socialMedia:req.body.socialMedia}).populate({path: 'posts',
+    profile
+    .findOne({userName:req.body.user.userName,crawlingTime:req.body.user.crawlingTime,socialMedia:req.body.socialMedia}).populate({path: 'posts',
       match: { postContent:{"$regex": req.body.filter, "$options": "i"}}}).exec( async function(err,doc){
         if(err){
           global.logger.error("error when trying to find user from database", {meta: {err: err.message}})

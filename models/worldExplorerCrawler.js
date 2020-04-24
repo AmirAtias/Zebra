@@ -31,7 +31,9 @@ async function WorldExplorerCrawler(username, url) {
     var Facebookposts = new facebookSchema({
       facebookUserName: username,
       url: url,
-      socialMedia: socialMedia
+      socialMedia: socialMedia,
+      crawlingTime:crawlingTime
+
     });
     const {
       Builder,
@@ -127,7 +129,6 @@ async function WorldExplorerCrawler(username, url) {
           postContent: postContent,
           comments: commentsArray,
           postTime: await postTime[0].getText(),
-          crawlingTime: crawlingTime
         });
       
       }
@@ -137,7 +138,6 @@ async function WorldExplorerCrawler(username, url) {
           postContent: postContent,
           comments: [],
           postTime: await postTime[0].getText(),
-          crawlingTime: crawlingTime
         });
       }
       await tempPost.save();

@@ -32,6 +32,8 @@ async function crawler(username, url) {
       url: url,
       userName: username,
       socialMedia: socialMedia,
+      crawlingTime:crawlingTime
+
     });
 
     const {
@@ -146,7 +148,6 @@ async function crawler(username, url) {
           postContent: postContent,
           comments: [],
           postTime: await date[0].getText(),
-          crawlingTime: crawlingTime
         });
       }
       await tempPost.save();

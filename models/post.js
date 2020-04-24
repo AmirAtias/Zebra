@@ -6,6 +6,5 @@ var postSchema=new Schema({
     postContent:{type:String},
     comments:[{commentHeader:String, commentContent:String, commentTime:String}],
     postTime: {type:String},
-    crawlingTime: {type:Date}
 });
 module.exports=mongoose.model('Post',postSchema);

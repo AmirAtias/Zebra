@@ -6,7 +6,9 @@ var profileSchema = new Schema({
         posts:[{type:Schema.Types.ObjectId,ref:'Post'}],
         filter:{type:String},
         socialMedia:{type:String,required:true},
-        bestConnections:[String]
+        bestConnections:[String],
+        crawlingTime: {type:Date}
+
 });
 
 module.exports=mongoose.model('Profile',profileSchema);
