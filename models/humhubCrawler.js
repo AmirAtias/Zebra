@@ -1,4 +1,4 @@
-
+/*
 function convertUTCDateToLocalDate(date) {
   var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
   var offset = date.getTimezoneOffset() / 60;
@@ -8,6 +8,25 @@ function convertUTCDateToLocalDate(date) {
 }
 var utcDate =  new Date;
 var crawlingTime = convertUTCDateToLocalDate(utcDate);
+*/
+function addZeroToStart(t){
+  if(t.length==1){
+    t = '0' +""+ t;
+  }
+  return t;
+}
+function getDateAndTime(){
+
+  var houer = addZeroToStart(new Date().getHours().toString());
+  var minuets = addZeroToStart(new Date().getMinutes().toString());
+  var secondes = addZeroToStart(new Date().getSeconds().toString());
+  var month = addZeroToStart((new Date().getMonth()+1).toString());
+  var day = addZeroToStart(new Date().getDate().toString());
+
+  return day+ "/" +month + " " + houer + ":" + minuets + ":" + secondes;
+
+}
+
 
 var profile = require('./profile');
 var crawlingRequests = require('./crawlingRequests');
@@ -28,12 +47,14 @@ async function crawler(username, url) {
     await crawlingRequests.findOneAndUpdate(filter, update, {
       upsert: true
     });
+    var crawlingTime = getDateAndTime();
+    console.log(crawlingTime)
+
     var profilePost = new profile({
       url: url,
       userName: username,
       socialMedia: socialMedia,
       crawlingTime:crawlingTime
-
     });
 
     const {
@@ -56,6 +77,8 @@ async function crawler(username, url) {
 
     await driver.get('https://guyandamir-sn.humhub.com/user/auth/login');
     await driver.sleep(10000);
+
+    // need to add get user from db to login
 
     element = await driver.findElement(By.xpath('//*[@id="login_username"]'));
     await element.sendKeys('guyamir');
@@ -138,8 +161,7 @@ async function crawler(username, url) {
           postHeader:  postHeader[0],
           postContent: postContent,
           comments: commentsArray,
-          postTime: await date[0].getText(),
-          crawlingTime: crawlingTime
+          postTime: await date[0].getText()
         });
       }
       else {
@@ -147,7 +169,7 @@ async function crawler(username, url) {
           postHeader:  postHeader[0],
           postContent: postContent,
           comments: [],
-          postTime: await date[0].getText(),
+          postTime: await date[0].getText()
         });
       }
       await tempPost.save();

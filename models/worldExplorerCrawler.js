@@ -1,4 +1,4 @@
-
+/*
 var facebookSchema = require('./profile');
 var crawlingRequests = require('./crawlingRequests');
 var reset = require('./resetCrawlingReq');
@@ -15,6 +15,24 @@ function convertUTCDateToLocalDate(date) {
 }
 var utcDate =  new Date;
 var crawlingTime = convertUTCDateToLocalDate(utcDate);
+*/
+function addZeroToStart(t){
+  if(t.length==1){
+    t = '0' +""+ t;
+  }
+  return t;
+}
+function getDateAndTime(){
+
+  var houer = addZeroToStart(new Date().getHours().toString());
+  var minuets = addZeroToStart(new Date().getMinutes().toString());
+  var secondes = addZeroToStart(new Date().getSeconds().toString());
+  var month = addZeroToStart((new Date().getMonth()+1).toString());
+  var day = addZeroToStart(new Date().getDate().toString());
+  
+  return day+ "/" +month + " " + houer + ":" + minuets + ":" + secondes;
+
+}
 async function WorldExplorerCrawler(username, url) {
   const socialMedia = "worldExplorer"
   try {
@@ -28,12 +46,13 @@ async function WorldExplorerCrawler(username, url) {
     await crawlingRequests.findOneAndUpdate(filter, update, {
       upsert: true
     });
+    var crawlingTime = getDateAndTime();
+
     var Facebookposts = new facebookSchema({
       facebookUserName: username,
       url: url,
       socialMedia: socialMedia,
       crawlingTime:crawlingTime
-
     });
     const {
       Builder,
@@ -57,7 +76,7 @@ async function WorldExplorerCrawler(username, url) {
     await driver.sleep(10000);
 
     element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[1]/div/div/form/div/div[1]/input'));
-
+// need to add get user from db to login
     await element.sendKeys('oshri@gmail.com');
     element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[1]/div/div/form/div/div[2]/input'));
     await element.sendKeys('123456789', Key.RETURN);
@@ -128,7 +147,7 @@ async function WorldExplorerCrawler(username, url) {
           postHeader: await postHeader[0].getText(),
           postContent: postContent,
           comments: commentsArray,
-          postTime: await postTime[0].getText(),
+          postTime: await postTime[0].getText()
         });
       
       }
@@ -137,7 +156,7 @@ async function WorldExplorerCrawler(username, url) {
           postHeader: await postHeader[0].getText(),
           postContent: postContent,
           comments: [],
-          postTime: await postTime[0].getText(),
+          postTime: await postTime[0].getText()
         });
       }
       await tempPost.save();
