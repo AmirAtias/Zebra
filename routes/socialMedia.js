@@ -25,10 +25,9 @@ router.post('/startCrawling',withAuth, async function (req, res, next) {
     var userName= await req.body.userName;
     var url= await req.body.url;
     var socialMedia= await req.body.socialMedia;
-    await humHubC.crawler("guy habert","https://guyandamir-sn.humhub.com/u/guyamir/");
-    res.json({validationSucess:"false",message:"The username or url is incorrect.Please change them and try again."});
+    var avatarData = await getRandomFictitiousUser.getRandomAvatar(socialMedia);
     //validate url and username
-   /* if(await checkURL.checkURL(userName,url,"humhub")){
+    if(await checkURL.checkURL(userName,url,"humhub")){
       if (await socialMedia == "Facebook"){
       //await FacebookC(userName,url)
        await humHubC.crawler(userName,url);
@@ -43,18 +42,17 @@ router.post('/startCrawling',withAuth, async function (req, res, next) {
     }
     else{
     res.json({validationSucess:"false",message:"The username or url is incorrect.Please change them and try again."});
-   }*/
+   }
   }
   catch (error) {
     console.log(error);
   }
 });
 
-
 //get all posts of  user
 router.get('/allposts',withAuth, async function (req, res, next) {
   let userJson=JSON.parse(req.query.user);
- profile
+  profile
   .findOne({userName:userJson.userName,crawlingTime:userJson.crawlingTime ,socialMedia:req.query.socialMedia}).populate('posts').exec( function(err,doc){
     if(err){
       global.logger.error("error when trying to find user from database", {meta: {err: err.message}})
@@ -77,7 +75,7 @@ router.get('/allposts',withAuth, async function (req, res, next) {
      mongoose.disconnect();
     await mongoose.connect('mongodb://localhost:27017/CleanDB',{useNewUrlParser: true});
     profile
-    .findOne({userName:userJson.userName ,socialMedia:req.query.socialMedia,filter:req.query.filter}).populate('posts').exec( async function(err,doc){
+    .findOne({userName:userJson.userName ,socialMedia:req.query.socialMedia,filter:req.query.filter,crawlingTime:userJson.crawlingTime}).populate('posts').exec( async function(err,doc){
       await mongoose.disconnect();
       await mongoose.connect('mongodb://localhost:27017/dirtyDB', { useNewUrlParser: true });
       if (err) {
@@ -95,7 +93,7 @@ router.get('/allposts',withAuth, async function (req, res, next) {
 router.get('/filterPosts',withAuth, async function (req, res, next) {
   let userJson=JSON.parse(req.query.user);
 
-  profile.findOne({userName:userJson.userName,crawlingTime:userJson.crawlingTime,socialMedia:req.query.socialMedia}).populate({path: 'posts',
+         profile.findOne({userName:userJson.userName,crawlingTime:userJson.crawlingTime,socialMedia:req.query.socialMedia}).populate({path: 'posts',
   match: { postContent:{"$regex": req.query.filter, "$options": "i"}}}).exec( function(err,doc){
     
     if(err){
@@ -108,19 +106,7 @@ router.get('/filterPosts',withAuth, async function (req, res, next) {
     
     });
   });
-router.post('/saveResults', withAuth, async function (req, res, next) {
-  profile
-    .findOne({ userName: req.body.userName, socialMedia: req.body.socialMedia }).populate({
-      path: 'posts',
-      match: { postContent: { "$regex": req.body.filter, "$options": "i" } }
-    }).exec(async function (err, doc) {
-      if (err) {
-        global.logger.error("error when trying to find user from database", { meta: { err: err.message } })
-        res.json({ isSucess: "false" })
-      }
-      
-      });
-    });
+
 
     router.get('/displayAllUsers',withAuth, async function (req, res, next) {
       if(req.query.cleanDb=="true"){
@@ -194,7 +180,8 @@ router.post('/saveResults', withAuth, async function (req, res, next) {
           res.json({isSucess:"false"})  
         }
         else{
-          var top5Connections =  await getTop5Arr.getTop5connections(doc);
+			 var top5Connections =  await getTop5Arr.getTop5connections(doc);
+			 console.log(top5Connections);
           await mongoose.disconnect();
           await mongoose.connect('mongodb://localhost:27017/CleanDB',{useNewUrlParser: true});
           for(post of doc.posts){
