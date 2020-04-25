@@ -37,8 +37,8 @@ async function crawler(username, url) {
   const socialMedia = "humhub"
   try {
     //update db -  start crawling
-
-    var filter = {
+    reqStatus=true;
+        var filter = {
       socialMedia: socialMedia
     };
     var update = {
