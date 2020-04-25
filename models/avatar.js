@@ -5,12 +5,13 @@ var avatarSchema = new Schema({
     userName: {type:String},
     email: {type:String},
     password: {type:String},
-    creatTime:{type:Date}
+    creatTime:{type:Date},
+    socialMedia:{type:String},
 });
 
 
 
-module.exports=mongoose.model('Avatar',avatarSchema);
+module.exports=mongoose.model('avatars',avatarSchema);
 
 
 

@@ -15,12 +15,8 @@ function convertUTCDateToLocalDate(date) {
 function randomInt(min, max) {
     return min + Math.floor((max - min) * Math.random());
 }
-
-
 var utcDate =  new Date;
 var creatTime = convertUTCDateToLocalDate(utcDate);
-
-
 var mongoose = require('mongoose');
 
 // make a connection
@@ -86,7 +82,8 @@ try {
             userName: newUsername,
             email: newEmail,
             password: newPassword,
-            creatTime:creatTime
+            creatTime:creatTime,
+            socialMedia:"humhub"
             });
           
 

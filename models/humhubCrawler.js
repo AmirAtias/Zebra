@@ -27,7 +27,7 @@ function getDateAndTime(){
 
 }
 
-
+var getRandomFictitiousUser = require("../models/getRandomFictitiousUser")
 var profile = require('./profile');
 var crawlingRequests = require('./crawlingRequests');
 var reset = require('./resetCrawlingReq');
@@ -79,6 +79,11 @@ async function crawler(username, url) {
     await driver.sleep(10000);
 
     // need to add get user from db to login
+    //var avatar = await getRandomFictitiousUser.getRandomAvatar("humhub");
+    //console.log("avatar::::          ::::  ")
+    //console.log(avatar);
+    //console.log(avatar.userName);
+   
 
     element = await driver.findElement(By.xpath('//*[@id="login_username"]'));
     await element.sendKeys('guyamir');

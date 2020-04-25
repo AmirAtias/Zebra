@@ -1,21 +1,23 @@
+var mongoose = require('mongoose');
+var avatar = require('../models/avatar');
+
 function randomInt(min, max) {
-    return min + Math.floor((max - min) * Math.random());
+  return min + Math.floor((max - min) * Math.random());
 }
 
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
- 
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("dirtyDB");
-  var avatar = dbo.collection("avatars").find({}).toArray(function(err, arrOfAvatars) {
-    if (err) throw err;
-    numberOfRandomAvatar = randomInt(0,arrOfAvatars.length) 
-    var selectedAvatar = arrOfAvatars[numberOfRandomAvatar];
-    console.log("The selected avatar is: ");
-    console.log(selectedAvatar);
-    db.close();
-    return selectedAvatar;
-  });
-  return avatar;
-});
+async function getRandomAvatar(req, res, socialMedia) {
+  //{socialMedia: socialMedia}
+  await mongoose.disconnect();
+  await mongoose.connect('mongodb://localhost:27017/dirtyDB');
+
+  var result = await avatar.find({}).populate('avatars');
+  var numberOfRandomAvatar = await randomInt(0, result.length)
+  var selectedAvatar = result[numberOfRandomAvatar];
+  var data = [];
+  data[0] = await selectedAvatar.userName;
+  data[1] = await selectedAvatar.password;
+  
+  return data;
+}
+
+module.exports.getRandomAvatar = getRandomAvatar;
