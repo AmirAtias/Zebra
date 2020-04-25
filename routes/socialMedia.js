@@ -142,7 +142,9 @@ router.get('/filterPosts',withAuth, async function (req, res, next) {
       await mongoose.disconnect();
       await mongoose.connect('mongodb://localhost:27017/CleanDB',{useNewUrlParser: true});
       profile.find({socialMedia:req.query.socialMedia,userName:userJson.userName,crawlingTime:userJson.crawlingTime}).exec(async function(err,doc){
-        var AllFilters = [];
+		  var AllFilters;
+		  //avoid duplicates
+		  var setOfFilters=new Set();
         await mongoose.disconnect();
         await mongoose.connect('mongodb://localhost:27017/dirtyDB',{useNewUrlParser: true});
           if(err){
@@ -151,10 +153,10 @@ router.get('/filterPosts',withAuth, async function (req, res, next) {
           }
           else{
             doc.forEach(function(user) {
-              AllFilters.push(user.filter);
+					setOfFilters.add(user.filter);
             }
             );
-          
+            AllFilters=Array.from(setOfFilters);
           }
           global.logger.info("success to get AllFilters", {meta: {AllFilters:AllFilters}})    
           res.status(200).json({filters:AllFilters});
@@ -178,7 +180,6 @@ router.get('/filterPosts',withAuth, async function (req, res, next) {
         }
         else{
 			 var top5Connections =  await getTop5Arr.getTop5connections(doc);
-			 console.log(top5Connections);
           await mongoose.disconnect();
           await mongoose.connect('mongodb://localhost:27017/CleanDB',{useNewUrlParser: true});
           for(post of doc.posts){

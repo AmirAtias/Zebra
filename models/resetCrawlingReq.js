@@ -26,6 +26,8 @@ async function resetHumHub(){
     await crawlingRequests.findOneAndUpdate({socialMedia: "humhub"}, update,{
         upsert: true
       });
+      reqStatus=false;
+
 }
 module.exports.resetCrawlingReq=resetCrawlingReq;
 module.exports.resetFacebook=resetFacebook;
