@@ -19,7 +19,7 @@ function checkIfEntryValueIsMatchToMaxMap (value, key, maxMap){
 function getMaxMap(k,map){
     var maxMap = new Map();
     map.forEach(function(value, key){
-        if ( maxMap.size < 2) {
+        if ( maxMap.size < 5) {
             maxMap.set(key,value);
         }
         else{
