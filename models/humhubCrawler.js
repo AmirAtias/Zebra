@@ -1,62 +1,29 @@
-/*
-function convertUTCDateToLocalDate(date) {
-  var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
-  var offset = date.getTimezoneOffset() / 60;
-  var hours = date.getHours();
-  newDate.setHours(hours - offset);
-  return newDate;   
-}
-var utcDate =  new Date;
-var crawlingTime = convertUTCDateToLocalDate(utcDate);
-*/
-function addZeroToStart(t){
-  if(t.length==1){
-    t = '0' +""+ t;
-  }
-  return t;
-}
-function getDateAndTime(){
-
-  var houer = addZeroToStart(new Date().getHours().toString());
-  var minuets = addZeroToStart(new Date().getMinutes().toString());
-  var secondes = addZeroToStart(new Date().getSeconds().toString());
-  var month = addZeroToStart((new Date().getMonth()+1).toString());
-  var day = addZeroToStart(new Date().getDate().toString());
-
-  return day+ "/" +month + " " + houer + ":" + minuets + ":" + secondes;
-
-}
-
+var utilitiesRequire = require("../models/crawlerUtilities");
+var utilities = new utilitiesRequire.crawlerUtilities();
 var getRandomFictitiousUser = require("../models/getRandomFictitiousUser")
 var profile = require('./profile');
 var crawlingRequests = require('./crawlingRequests');
 var reset = require('./resetCrawlingReq');
 var post = require('./post');
 
-async function crawler(username, url) {
-  const socialMedia = "humhub"
+async function crawler(username, url, socialMedia) {
   try {
     //update db -  start crawling
-
-    var filter = {
-      socialMedia: socialMedia
-    };
-    var update = {
-      requestHandling: true
-    };
+    reqStatus=true;
+    var filter = { socialMedia: socialMedia };
+    var update = { requestHandling: true };
     await crawlingRequests.findOneAndUpdate(filter, update, {
       upsert: true
     });
-    var crawlingTime = getDateAndTime();
-    console.log(crawlingTime)
-
+    var crawlingTime = utilities.getDateAndTime();
+    console.log(utilities.x);
+    
     var profilePost = new profile({
       url: url,
       userName: username,
       socialMedia: socialMedia,
-      crawlingTime:crawlingTime
+      crawlingTime: crawlingTime
     });
-
     const {
       Builder,
       Key,
@@ -80,16 +47,11 @@ async function crawler(username, url) {
 
     // need to add get user from db to login
     //var avatar = await getRandomFictitiousUser.getRandomAvatar("humhub");
-    //console.log("avatar::::          ::::  ")
-    //console.log(avatar);
-    //console.log(avatar.userName);
-   
-
     element = await driver.findElement(By.xpath('//*[@id="login_username"]'));
     await element.sendKeys('guyamir');
     element = await driver.findElement(By.xpath('//*[@id="login_password"]'));
     await element.sendKeys('15293amirh', Key.RETURN);
-    setTimeout(function () {}, 3000);
+    setTimeout(function () { }, 3000);
 
     await driver.sleep(2000);
     await driver.get(url);
@@ -123,28 +85,25 @@ async function crawler(username, url) {
       const element = allPosts[index];
       var tempPostHeader1 = await element.findElements(By.css(".media-heading"));
       var tempPostHeader2 = await tempPostHeader1[0].getText();
-
       var postHeader = tempPostHeader2.split("PUBLIC");
-
       var date = await element.findElements(By.css(".media-subheading"));
       var postContentContainer = await element.findElements(By.css(".content"));
-        
+
       if (postContentContainer.length > 0) //handle post content
         postContent = await postContentContainer[0].getText();
       else
         postContent = "";
-      if   (await element.findElements(By.css(".show.show-all-link")) != 0){
-          var commentsButton = await element.findElements(By.css(".show.show-all-link"));
-          await commentsButton[0].click();
+      if (await element.findElements(By.css(".show.show-all-link")) != 0) {
+        var commentsButton = await element.findElements(By.css(".show.show-all-link"));
+        await commentsButton[0].click();
       }
-    
+
       await driver.sleep(1000);
       var commentsContainer = await element.findElements(By.css(".media"));
       await driver.sleep(1000);
       var commentsArray = [];
       if (commentsContainer.length > 1) { //check if the post contian comments
         await driver.sleep(1000);
-
         for (i = 1; i < commentsContainer.length; i++) {
           var commentTimeContainer = await commentsContainer[i].findElements(By.css(".time"));
           var headersContainer = await commentsContainer[i].findElements(By.css(".media-heading"));
@@ -153,17 +112,18 @@ async function crawler(username, url) {
           var commentContent = await commentContentContainer[0].getText();
           var tempheader = await headersContainer[0].getText();
           var commentTime = await commentTimeContainer[0].getText();
-
           var commentheader = tempheader.split(commentTime);
-        
+
           //Saves in the json array all important parameters associated with each post response
-          commentsArray.push({"commentHeader":commentheader[0],
-          "commentContent": commentContent,
-          "commentTime":commentTime});
+          commentsArray.push({
+            "commentHeader": commentheader[0],
+            "commentContent": commentContent,
+            "commentTime": commentTime
+          });
         }
 
         var tempPost = new post({
-          postHeader:  postHeader[0],
+          postHeader: postHeader[0],
           postContent: postContent,
           comments: commentsArray,
           postTime: await date[0].getText()
@@ -171,7 +131,7 @@ async function crawler(username, url) {
       }
       else {
         var tempPost = new post({
-          postHeader:  postHeader[0],
+          postHeader: postHeader[0],
           postContent: postContent,
           comments: [],
           postTime: await date[0].getText()
@@ -189,7 +149,6 @@ async function crawler(username, url) {
         console.log("success")
       }
     });
-
     reset.resetHumHub();
   } catch (error) { //reset HumHub request in case there is error
     console.log(error);

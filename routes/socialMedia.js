@@ -26,17 +26,14 @@ router.post('/startCrawling',withAuth, async function (req, res, next) {
     var url= await req.body.url;
     var socialMedia= await req.body.socialMedia;
     var avatarData = await getRandomFictitiousUser.getRandomAvatar(socialMedia);
+
     //validate url and username
-    if(await checkURL.checkURL(userName,url,"humhub")){
-      if (await socialMedia == "Facebook"){
-      //await FacebookC(userName,url)
-       await humHubC.crawler(userName,url);
-     }
-      else if(await socialMedia == "WorldExplorer"){
-       await worldExplorerC.crawler(userName,url);
+    if(await checkURL.checkURL(userName,url,socialMedia)){
+      if(await socialMedia == "WorldExplorer"){
+        worldExplorerC.crawler(userName,url,socialMedia);
      }
       else if(await socialMedia == "humhub"){
-      await humHubC.crawler(userName,url);
+       humHubC.crawler(userName,url,socialMedia);
      }
     res.json({validationSucess:"true"});
     }

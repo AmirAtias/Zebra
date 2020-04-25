@@ -37,6 +37,7 @@ async function WorldExplorerCrawler(username, url) {
   const socialMedia = "worldExplorer"
   try {
     //update db -  start crawling
+    reqStatus=true;
     var filter = {
       socialMedia
     };
