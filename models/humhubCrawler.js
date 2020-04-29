@@ -1,12 +1,11 @@
 var utilitiesRequire = require("../models/crawlerUtilities");
 var utilities = new utilitiesRequire.crawlerUtilities();
-var getRandomFictitiousUser = require("../models/getRandomFictitiousUser")
-var profile = require('./profile');
-var crawlingRequests = require('./crawlingRequests');
-var reset = require('./resetCrawlingReq');
-var post = require('./post');
+var reset = utilities.reset;
+var crawlingRequests = utilities.crawlingRequests;
+var profile = utilities.profile;
+var getRandomFictitiousUser = utilities.getRandomFictitiousUser;
 
-async function crawler(username, url, socialMedia) {
+async function crawler(username, userUrl, socialMedia) {
   try {
     //update db -  start crawling
     reqStatus=true;
@@ -16,22 +15,21 @@ async function crawler(username, url, socialMedia) {
       upsert: true
     });
     var crawlingTime = utilities.getDateAndTime();
-    console.log(utilities.x);
     
     var profilePost = new profile({
-      url: url,
+      url: userUrl,
       userName: username,
       socialMedia: socialMedia,
       crawlingTime: crawlingTime
     });
+    ///delete!!
     const {
       Builder,
       Key,
       promise,
-      until,
-      By,
-      webdriver
+      By
     } = require('selenium-webdriver');
+
     require('selenium-webdriver/lib/error');
     const firefox = require('selenium-webdriver/firefox');
     promise.USE_PROMISE_MANAGER = false;
@@ -41,46 +39,13 @@ async function crawler(username, url, socialMedia) {
       .forBrowser("firefox")
       .setFirefoxOptions(firefoxOptions)
       .build();
+    var loginUrl = 'https://guyandamir-sn.humhub.com/user/auth/login';
+    var userNameId = '//*[@id="login_username"]';
+    var passwordId = '//*[@id="login_password"]';
+    var allPostsClassName = ".wall-entry";
+    //Scroll down the page and then collect all the posts on this page
+    var allPosts = await utilities.getAllPosts(driver,loginUrl,socialMedia,userNameId,passwordId,userUrl,allPostsClassName);
 
-    await driver.get('https://guyandamir-sn.humhub.com/user/auth/login');
-    await driver.sleep(10000);
-
-    // need to add get user from db to login
-    //var avatar = await getRandomFictitiousUser.getRandomAvatar("humhub");
-    element = await driver.findElement(By.xpath('//*[@id="login_username"]'));
-    await element.sendKeys('guyamir');
-    element = await driver.findElement(By.xpath('//*[@id="login_password"]'));
-    await element.sendKeys('15293amirh', Key.RETURN);
-    setTimeout(function () { }, 3000);
-
-    await driver.sleep(2000);
-    await driver.get(url);
-    await driver.manage().window().maximize();
-    await driver.sleep(2000);
-    await (driver).executeScript("window.scrollTo(0, document.body.scrollHeight);");
-    await driver.sleep(2000);
-
-    var className = ".wall-entry";
-    var allPosts = await driver.findElements(By.css(className));
-    var numberOfPosts = allPosts.length;
-    //Scrolls to the bottom
-    while (true) {
-      await (driver).executeScript("window.scrollTo(0, document.body.scroll);");
-      await driver.sleep(3000);
-      await (driver).executeScript("window.scrollTo(0, document.body.scrollHeight);");
-      await driver.sleep(3000);
-      await (driver).executeScript("window.scrollTo(0, document.body.scrollHeight);");
-
-      var tempNumOfPosts = await driver.findElements(By.css(className));
-      if (tempNumOfPosts.length == numberOfPosts) {
-        break;
-      } else {
-        numberOfPosts = tempNumOfPosts.length;
-      }
-    }
-
-    allPosts = await driver.findElements(By.css(className));
-    await driver.executeScript("arguments[0].scrollIntoView(false);", allPosts[0]); //  scrolling to top
     for (let index = 0; index < allPosts.length; index++) {
       const element = allPosts[index];
       var tempPostHeader1 = await element.findElements(By.css(".media-heading"));
@@ -115,43 +80,24 @@ async function crawler(username, url, socialMedia) {
           var commentheader = tempheader.split(commentTime);
 
           //Saves in the json array all important parameters associated with each post response
-          commentsArray.push({
-            "commentHeader": commentheader[0],
-            "commentContent": commentContent,
-            "commentTime": commentTime
-          });
+          utilities.fillCommentsArr(commentsArray,commentheader[0],commentContent, commentTime);
         }
+      }
+      var currPost = utilities.creatPostSchema(postHeader[0],postContent,commentsArray,await date[0].getText());
 
-        var tempPost = new post({
-          postHeader: postHeader[0],
-          postContent: postContent,
-          comments: commentsArray,
-          postTime: await date[0].getText()
-        });
-      }
-      else {
-        var tempPost = new post({
-          postHeader: postHeader[0],
-          postContent: postContent,
-          comments: [],
-          postTime: await date[0].getText()
-        });
-      }
-      await tempPost.save();
-      profilePost.posts.push(tempPost);
+      await currPost.save();
+      profilePost.posts.push(currPost);
       await driver.executeScript("arguments[0].scrollIntoView(false);", allPosts[index]);
       await driver.sleep(1000);
     }
-    profilePost.save(function (err, result) {
-      if (err) {
-        console.log(err.message)
-      } else {
-        console.log("success")
-      }
-    });
-    reset.resetHumHub();
-  } catch (error) { //reset HumHub request in case there is error
+
+    utilities.saveProfilePost(profilePost);
+    await driver.close();    
+  } catch (error) { 
     console.log(error);
+  }
+  finally{
+    //reset HumHub request
     reset.resetHumHub();
   }
 }

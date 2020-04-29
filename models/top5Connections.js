@@ -48,8 +48,8 @@ function getArrOfKeys(map){
     return keysArr;
 }
 
-async function getTop5connections(doc) {
-    var userName = "guy habert"; 
+async function getTop5connections(doc,userName) {
+    console.log(userName);
     //options that username is stored in db 
     var userNameOptions = [userName+" ", userName+"\n", userName];
 
@@ -74,6 +74,7 @@ async function getTop5connections(doc) {
     catch (error) { 
         console.log(error);
     } 
+    console.log(getArrOfKeys(fiveHigestValuesInMap));
     return getArrOfKeys(fiveHigestValuesInMap);
 } 
 

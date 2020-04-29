@@ -83,17 +83,15 @@ try {
             email: newEmail,
             password: newPassword,
             creatTime:creatTime,
-            socialMedia:"humhub"
+            socialMedia:"WorldExplorer"
             });
-          
-
+    
           // save schema to db
           await newUser.save(function (err) {
             if (err) return console.error(err);
             db.close();
           });
-
-          
+          await driver.close();
       } catch (error) { 
         console.log(error);
       }

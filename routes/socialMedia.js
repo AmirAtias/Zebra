@@ -25,8 +25,6 @@ router.post('/startCrawling',withAuth, async function (req, res, next) {
     var userName= await req.body.userName;
     var url= await req.body.url;
     var socialMedia= await req.body.socialMedia;
-    var avatarData = await getRandomFictitiousUser.getRandomAvatar(socialMedia);
-
     //validate url and username
     if(await checkURL.checkURL(userName,url,socialMedia)){
       if(await socialMedia == "WorldExplorer"){
@@ -179,7 +177,7 @@ router.get('/filterPosts',withAuth, async function (req, res, next) {
           res.json({isSucess:"false"})  
         }
         else{
-			 var top5Connections =  await getTop5Arr.getTop5connections(doc);
+			    var top5Connections =  await getTop5Arr.getTop5connections(doc,req.body.user.userName);
           await mongoose.disconnect();
           await mongoose.connect('mongodb://localhost:27017/CleanDB',{useNewUrlParser: true});
           for(post of doc.posts){
