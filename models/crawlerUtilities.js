@@ -1,7 +1,5 @@
 const {
-    Builder,
     Key,
-    promise,
     By
 } = require('selenium-webdriver');
 
@@ -17,9 +15,9 @@ class crawlerUtilities {
         if (t.length == 1) {
             t = '0' + "" + t;
         }
-
         return t;
     }
+
 
     getDateAndTime() {
         var houer = this.addZeroToStart(new Date().getHours().toString());
@@ -31,44 +29,51 @@ class crawlerUtilities {
         return day + "/" + month + " " + houer + ":" + minuets + ":" + secondes;
     }
 
-    async getAllPosts(driver, loginUrl, socialMedia, userNameId, passwordId, userUrl, allPostsClassName) {
+    fillProfileSchema(userUrl, username, socialMedia) {
+        var crawlingTime = this.getDateAndTime();
+        return new this.profile({
+            url: userUrl,
+            userName: username,
+            socialMedia: socialMedia,
+            crawlingTime: crawlingTime
+        });
+    }
 
+    async scroolsToBottom(driver, allPostsClassName, numberOfPosts) {
+        while (true) {
+            await (driver).executeScript("window.scrollTo(0, document.body.scroll);");
+            await driver.sleep(2000);
+            await (driver).executeScript("window.scrollTo(0, document.body.scrollHeight);");
+            var tempNumOfPosts = await driver.findElements(By.css(allPostsClassName));
+            if (tempNumOfPosts.length == numberOfPosts) {
+                break;
+            } else {
+                numberOfPosts = tempNumOfPosts.length;
+            }
+        }
+    }
+
+    async getAllPosts(driver, loginUrl, socialMedia, userNameId, passwordId, userUrl, allPostsClassName) {
         try {
             console.log("srart gut")
             await driver.get(loginUrl);
             await driver.sleep(10000);
-
             // get user from db to login
             var avatarData = await this.getRandomFictitiousUser.getRandomAvatar(socialMedia);
             element = await driver.findElement(By.xpath(userNameId));
             await element.sendKeys(avatarData[0]);
             element = await driver.findElement(By.xpath(passwordId));
             await element.sendKeys(avatarData[1], Key.RETURN);
-
             await driver.sleep(2000);
             await driver.get(userUrl);
             await driver.manage().window().maximize();
             await driver.sleep(2000);
             await (driver).executeScript("window.scrollTo(0, document.body.scrollHeight);");
             await driver.sleep(2000);
-
             var allPosts = await driver.findElements(By.css(allPostsClassName));
             var numberOfPosts = allPosts.length;
             //Scrolls to the bottom
-            while (true) {
-                await (driver).executeScript("window.scrollTo(0, document.body.scroll);");
-                await driver.sleep(3000);
-                await (driver).executeScript("window.scrollTo(0, document.body.scrollHeight);");
-                await driver.sleep(3000);
-                await (driver).executeScript("window.scrollTo(0, document.body.scrollHeight);");
-
-                var tempNumOfPosts = await driver.findElements(By.css(allPostsClassName));
-                if (tempNumOfPosts.length == numberOfPosts) {
-                    break;
-                } else {
-                    numberOfPosts = tempNumOfPosts.length;
-                }
-            }
+            await this.scroolsToBottom(driver, allPostsClassName, numberOfPosts);
             allPosts = await driver.findElements(By.css(allPostsClassName));
             await driver.executeScript("arguments[0].scrollIntoView(false);", allPosts[0]); //  scrolling to top
             return allPosts;
