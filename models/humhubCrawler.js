@@ -2,6 +2,7 @@ var utilitiesRequire = require("../models/crawlerUtilities");
 var utilities = new utilitiesRequire.crawlerUtilities();
 var reset = utilities.reset;
 var crawlingRequests = utilities.crawlingRequests;
+
 async function clickIfCommentsButtonExists(element, By) {
   if (await element.findElements(By.css(".show.show-all-link")) != 0) {
     var commentsButton = await element.findElements(By.css(".show.show-all-link"));
@@ -93,7 +94,7 @@ async function crawler(username, userUrl, socialMedia) {
     utilities.saveProfilePost(profilePost);
     await driver.close();
   } catch (error) {
-    console.log(error);
+    global.logger.error("error when trying to use Humhub crawler", {meta: {err: error.message}})
   }
   finally {
     //reset HumHub request

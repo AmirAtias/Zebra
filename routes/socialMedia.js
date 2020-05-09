@@ -1,5 +1,4 @@
 var express = require('express');
-var FacebookC = require('../models/facebookCrawler');
 var worldExplorerC = require('../models/worldExplorerCrawler');
 var profile = require('../models/profile');
 var mongoose = require('mongoose');
@@ -7,8 +6,6 @@ var humHubC = require("../models/humhubCrawler");
 var getTop5Arr = require("../models/top5Connections")
 var router = express.Router();
 var checkURL = require("../models/CheckingTheURL")
-var getRandomFictitiousUser = require("../models/getRandomFictitiousUser")
-
 const withAuth = require('./middleware')
 
 router.get('/requestStatus',async function(req, res, next){

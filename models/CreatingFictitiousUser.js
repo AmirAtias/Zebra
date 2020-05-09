@@ -6,11 +6,11 @@ var mongoose = require('mongoose');
 mongoose.connect("mongodb://localhost:27017/dirtyDB", { useNewUrlParser: true, useUnifiedTopology: true });
 // get reference to database
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+db.on('error', global.logger.error("connection to db error", {meta: {err: error.message}}));
 db.once('open', async function () {
   try {
     const {
-      Builder,
+      Builder, 
       Key,
       promise,
       until,
@@ -68,12 +68,14 @@ db.once('open', async function () {
 
     // save schema to db
     await newUser.save(function (err) {
-      if (err) return console.error(err);
+      if (err) {
+        global.logger.error("error when trying to save newAvatar to database", {meta: {err: err.message}})
+      }
       db.close();
     });
     await driver.close();
   } catch (error) {
-    console.log(error);
+    global.logger.error("error when trying to creat fictitous user", {meta: {err: error.message}})
   }
 
 });

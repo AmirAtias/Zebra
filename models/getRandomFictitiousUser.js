@@ -19,7 +19,7 @@ async function getRandomAvatar(socialMedia) {
     return data;
   }
   catch (err) {
-    console.log(err)
+    global.logger.error("error in get Random Fictitious User function", {meta:{ err: error.message }})
   }
 }
 

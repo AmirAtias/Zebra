@@ -7,6 +7,7 @@ var post = require('./post');
 
 class crawlerUtilities {
     reset = require('./resetCrawlingReq');
+    Logger = require('logdna');
     crawlingRequests = require('./crawlingRequests');
     profile = require('./profile');
     getRandomFictitiousUser = require("../models/getRandomFictitiousUser");
@@ -55,7 +56,6 @@ class crawlerUtilities {
 
     async getAllPosts(driver, loginUrl, socialMedia, userNameId, passwordId, userUrl, allPostsClassName) {
         try {
-            console.log("srart gut")
             await driver.get(loginUrl);
             await driver.sleep(10000);
             // get user from db to login
@@ -79,7 +79,7 @@ class crawlerUtilities {
             return allPosts;
         }
         catch (err) {
-            console.log(err)
+            global.logger.error("error in getAllPosts function", {meta: {err: err.message}})
         }
     }
 
@@ -103,9 +103,9 @@ class crawlerUtilities {
     saveProfilePost(profilePost) {
         profilePost.save(function (err) {
             if (err) {
-                console.log(err.message)
+                global.logger.error("error in saveProfilePost function", {meta: {err: err.message}})
             } else {
-                console.log("success")
+                global.logger.info("The crawl ended successfully");    
             }
         });
     }

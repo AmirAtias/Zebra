@@ -84,9 +84,8 @@ async function getTop5connections(doc, userName) {
         fiveHigestValuesInMap = getMaxMap(5, allConnectionsMap);
     }
     catch (error) {
-        console.log(error);
+        global.logger.error("error when trying to get top 5 connections", {meta: {err: error.message}})
     }
-    console.log(getArrOfKeys(fiveHigestValuesInMap));
     return getArrOfKeys(fiveHigestValuesInMap);
 }
 

@@ -94,7 +94,7 @@ async function crawler(username, userUrl, socialMedia) {
     utilities.saveProfilePost(profilePost);
     await driver.close();
   } catch (error) {
-    console.log(error);
+    global.logger.error("error when trying to use World Explorer crawler", {meta: {err: error.message}})
   }
   finally {
     //reset worldExplorer request

@@ -22,7 +22,7 @@ async function checkURL(username, url, socialNetwork) {
     var currentUsername = "";
     var avatarData = await utilities.getRandomFictitiousUser.getRandomAvatar(socialNetwork);
 
-    if (socialNetwork == "humhub") {
+    if (socialNetwork == "humhub1") {
       await driver.get('https://guyandamir-sn.humhub.com/user/auth/login');
       await driver.sleep(10000);
       // get user from db
@@ -37,10 +37,8 @@ async function checkURL(username, url, socialNetwork) {
       await driver.sleep(2000);
       element = await driver.findElement(By.css('.profile'));
       currentUsername = await element.getText()
-      console.log(currentUsername)
     }
     else if (socialNetwork == "WorldExplorer") {
-      console.log("here " + socialNetwork)
       await driver.get('http://localhost:3000');
       await driver.sleep(10000);
       element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[1]/div/div/form/div/div[1]/input'));
@@ -52,22 +50,19 @@ async function checkURL(username, url, socialNetwork) {
       await driver.sleep(2000);
       element = await driver.findElement(By.css('.sc-jTzLTM.gsLxCE'));
       currentUsername = await element.getText()
-      console.log(currentUsername)
     }
     else if (socialNetwork == "facebook") {
 
     }
     else {
-      console.log("122334545 " + socialNetwork)
-
-      console.log("This social network cannot be used with this software")
+      global.logger.info("This social network cannot be used with this software");    
       currentUsername = "";
     }
     await driver.close();
     return (currentUsername === username);
 
   } catch (error) {
-    console.log(error);
+    global.logger.error("error in checking the url function", {meta:{ err: error.message }})
     return false;
   }
 }
