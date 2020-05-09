@@ -1,16 +1,30 @@
-var utilitiesRequire = require("../models/crawlerUtilities");
-var utilities = new utilitiesRequire.crawlerUtilities();
 var mongoose = require('mongoose');
+var avatar = require('./avatar');	
+function convertUTCDateToLocalDate(date) {	
+  var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);	
 
+  var offset = date.getTimezoneOffset() / 60;	
+  var hours = date.getHours();	
+
+  newDate.setHours(hours - offset);	
+
+  return newDate;   	
+}	
+
+function randomInt(min, max) {	
+    return min + Math.floor((max - min) * Math.random());	
+}	
+var utcDate =  new Date;	
+var creatTime = convertUTCDateToLocalDate(utcDate);	
 // make a connection
 mongoose.connect("mongodb://localhost:27017/dirtyDB", { useNewUrlParser: true, useUnifiedTopology: true });
 // get reference to database
 var db = mongoose.connection;
-db.on('error', global.logger.error("connection to db error"));
+db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', async function () {
   try {
     const {
-      Builder, 
+      Builder,
       Key,
       promise,
       until,
@@ -54,7 +68,6 @@ db.once('open', async function () {
     element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[2]/div/div[2]/form/div[2]/input'));
     await element.sendKeys(newPassword, Key.RETURN);
     await driver.sleep(2000);
-    var creatTime = utilities.getDateAndTime();
 
     // craet new user schema
     var newUser = new avatar({
@@ -68,20 +81,15 @@ db.once('open', async function () {
 
     // save schema to db
     await newUser.save(function (err) {
-      if (err) {
-        global.logger.error("error when trying to save newAvatar to database", {meta: {err: err.message}})
-      }
+      if (err) return console.error(err);
       db.close();
     });
     await driver.close();
   } catch (error) {
-    global.logger.error("error when trying to creat fictitous user", {meta: {err: error.message}})
+    console.log(error);
   }
 
 });
-
-
-
 
 
 

@@ -7,7 +7,6 @@ var post = require('./post');
 
 class crawlerUtilities {
     reset = require('./resetCrawlingReq');
-    Logger = require('logdna');
     crawlingRequests = require('./crawlingRequests');
     profile = require('./profile');
     getRandomFictitiousUser = require("../models/getRandomFictitiousUser");
@@ -18,7 +17,6 @@ class crawlerUtilities {
         }
         return t;
     }
-
 
     getDateAndTime() {
         var houer = this.addZeroToStart(new Date().getHours().toString());
