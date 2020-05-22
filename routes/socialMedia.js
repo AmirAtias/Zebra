@@ -98,8 +98,9 @@ router.get('/filterPosts',withAuth, async function (req, res, next) {
   let userJson=JSON.parse(req.query.user);
 
          profile.findOne({userName:userJson.userName,crawlingTime:userJson.crawlingTime,socialMedia:req.query.socialMedia}).populate({path: 'posts',
-  match: { postContent:{"$regex": req.query.filter, "$options": "i"}}}).exec( function(err,doc){
-    
+  match:  { "$or": [ { postContent:{ "$regex":req.query.filter } }, { comments:{ "$elemMatch":{ commentContent:{ "$regex":req.query.filter } } } } ] }}).exec( function(err,doc){
+  
+   
     if(err){
       global.logger.error("error when trying to find user from database", {meta: {err: err.message}})
       res.status(500).json({allPosts:[]})
@@ -180,7 +181,7 @@ router.get('/filterPosts',withAuth, async function (req, res, next) {
       filter=req.body.filter;
     }
       profile.findOne({userName:req.body.user.userName,crawlingTime:req.body.user.crawlingTime,socialMedia:req.body.socialMedia}).populate({path: 'posts',
-      match: { postContent:{"$regex":filter, "$options": "i"}}}).exec( async function(err,doc){
+      match:{ "$or": [ { postContent:{ "$regex":req.query.filter } }, { comments:{ "$elemMatch":{ commentContent:{ "$regex":req.query.filter } } } } ] }}).exec( async function(err,doc){
         if(err){
           global.logger.error("error when trying to find user from database", {meta: {err: err.message}})
           res.json({isSucess:"false"})  
