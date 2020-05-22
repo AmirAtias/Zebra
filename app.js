@@ -7,7 +7,6 @@ var expressHbs = require('express-handlebars');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var socialMedia=require('./routes/socialMedia');
-var crawlingReq=require('./models/crawlingRequests');
 var resetReq=require('./models/resetCrawlingReq');
 var mongoose=require('mongoose');
 var cors = require('cors')

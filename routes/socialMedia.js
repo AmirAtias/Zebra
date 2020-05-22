@@ -1,5 +1,4 @@
 var express = require('express');
-var FacebookC = require('../models/facebookCrawler');
 var worldExplorerC = require('../models/worldExplorerCrawler');
 var profile = require('../models/profile');
 var mongoose = require('mongoose');
@@ -7,8 +6,6 @@ var humHubC = require("../models/humhubCrawler");
 var getTop5Arr = require("../models/top5Connections")
 var router = express.Router();
 var checkURL = require("../models/CheckingTheURL")
-var getRandomFictitiousUser = require("../models/getRandomFictitiousUser")
-
 const withAuth = require('./middleware')
 
 router.get('/requestStatus',async function(req, res, next){
@@ -25,33 +22,24 @@ router.post('/startCrawling',withAuth, async function (req, res, next) {
     var userName= await req.body.userName;
     var url= await req.body.url;
     var socialMedia= await req.body.socialMedia;
-   humHubC.crawler("guy habert","https://guyandamir-sn.humhub.com/u/guyamir/");
-	 res.json({validationSucess:"true"});
-
-	 //res.json({validationSucess:"false",message:"The username or url is incorrect.Please change them and try again."});
     //validate url and username
-   /* if(await checkURL.checkURL(userName,url,"humhub")){
-      if (await socialMedia == "Facebook"){
-      //await FacebookC(userName,url)
-       await humHubC.crawler(userName,url);
-     }
-      else if(await socialMedia == "WorldExplorer"){
-       await worldExplorerC.crawler(userName,url);
+    if(await checkURL.checkURL(userName,url,socialMedia)){
+      if(await socialMedia == "WorldExplorer"){
+        worldExplorerC.crawler(userName,url,socialMedia);
      }
       else if(await socialMedia == "humhub"){
-      await humHubC.crawler(userName,url);
+       humHubC.crawler(userName,url,socialMedia);
      }
     res.json({validationSucess:"true"});
     }
     else{
     res.json({validationSucess:"false",message:"The username or url is incorrect.Please change them and try again."});
-   }*/
+   }
   }
   catch (error) {
     console.log(error);
   }
 });
-
 
 //get all posts of  user
 router.get('/allposts',withAuth, async function (req, res, next) {
@@ -187,7 +175,7 @@ router.get('/filterPosts',withAuth, async function (req, res, next) {
           res.json({isSucess:"false"})  
         }
         else{
-			 var top5Connections =  await getTop5Arr.getTop5connections(doc);
+			    var top5Connections =  await getTop5Arr.getTop5connections(doc,req.body.user.userName);
           await mongoose.disconnect();
           await mongoose.connect('mongodb://localhost:27017/CleanDB',{useNewUrlParser: true});
           for(post of doc.posts){

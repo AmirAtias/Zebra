@@ -5,20 +5,20 @@ var post = require('./post');
 
 
 function convertUTCDateToLocalDate(date) {
-  var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+  var newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
 
   var offset = date.getTimezoneOffset() / 60;
   var hours = date.getHours();
 
   newDate.setHours(hours - offset);
 
-  return newDate;   
+  return newDate;
 }
 
-var utcDate =  new Date;
+var utcDate = new Date;
 var crawlingTime = convertUTCDateToLocalDate(utcDate);
 
-async function crawler(username, url,socialMedia) {
+async function crawler(username, url, socialMedia) {
   try {
     //update db -  start crawling
     var filter = { socialMedia: "Facebook" };
@@ -26,11 +26,11 @@ async function crawler(username, url,socialMedia) {
     await crawlingRequests.findOneAndUpdate(filter, update, {
       upsert: true
     });
-    reqStatus=true;
+    reqStatus = true;
     var Facebookposts = new profile({
       userName: "ani atias",
       url: "https://www.facebook.com/profile.php?id=100001660335679",
-      socialMedia:"facebook"
+      socialMedia: "facebook"
     });
     console.log(username);
     console.log(url);
@@ -147,7 +147,7 @@ async function crawler(username, url,socialMedia) {
           });
 
           await tempPost.save();
-          
+
           Facebookposts.posts.push(tempPost);
 
 
@@ -193,10 +193,6 @@ async function crawler(username, url,socialMedia) {
   }
 
 }
-
- 
-
-
 
 module.exports.crawler = crawler;
 
