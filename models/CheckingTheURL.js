@@ -22,7 +22,7 @@ async function checkURL(username, url, socialNetwork) {
     var currentUsername = "";
     var avatarData = await utilities.getRandomFictitiousUser.getRandomAvatar(socialNetwork);
 
-    if (socialNetwork == "humhub1") {
+    if (socialNetwork == "humhub") {
       await driver.get('https://guyandamir-sn.humhub.com/user/auth/login');
       await driver.sleep(10000);
       // get user from db
