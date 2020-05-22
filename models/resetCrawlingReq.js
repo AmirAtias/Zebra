@@ -1,5 +1,4 @@
 var crawlingRequests = require('./crawlingRequests');
-var app = require('../app');
 var update = { requestHandling: false };
 async function resetCrawlingReq() {
     resetFacebook();
