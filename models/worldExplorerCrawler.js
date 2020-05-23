@@ -1,9 +1,9 @@
 var utilitiesRequire = require("../models/crawlerUtilities");
 var utilities = new utilitiesRequire.crawlerUtilities();
 var post = utilities.post;
-var reset = utilities.reset;
-var crawlingRequests = utilities.crawlingRequests;
+var reset =require('./resetCrawlingReq');
 
+var crawlingRequests = require('./crawlingRequests');
 async function saveCommentsData(driver, commentsContainer, headersContainer, commentsArray) {
   if (commentsContainer.length > 0) { //check if the post contian comments
     await driver.sleep(1000);

@@ -1,5 +1,3 @@
-var utilitiesRequire = require("../models/crawlerUtilities");
-var utilities = new utilitiesRequire.crawlerUtilities();
 
 async function checkURL(username, url, socialNetwork) {
   try {
@@ -20,7 +18,8 @@ async function checkURL(username, url, socialNetwork) {
       .build();
 
     var currentUsername = "";
-    var avatarData = await utilities.getRandomFictitiousUser.getRandomAvatar(socialNetwork);
+    var getRandomFictitiousUser = require("../models/getRandomFictitiousUser");
+    var avatarData = await getRandomFictitiousUser.getRandomAvatar(socialNetwork);
 
     if (socialNetwork == "humhub") {
       await driver.get('https://guyandamir-sn.humhub.com/user/auth/login');
@@ -29,6 +28,7 @@ async function checkURL(username, url, socialNetwork) {
       element = await driver.findElement(By.xpath('//*[@id="login_username"]'));
       // await element.sendKeys('guyamir');
       await element.sendKeys(await avatarData[0]);
+
 
       element = await driver.findElement(By.xpath('//*[@id="login_password"]'));
       await element.sendKeys(await avatarData[1], Key.RETURN);
@@ -42,9 +42,9 @@ async function checkURL(username, url, socialNetwork) {
       await driver.get('http://localhost:3000');
       await driver.sleep(10000);
       element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[1]/div/div/form/div/div[1]/input'));
-      await element.sendKeys(avatarData[0]);
+      await element.sendKeys(await avatarData[0]);
       element = await driver.findElement(By.xpath('//*[@id="root"]/div/div[2]/div[1]/div/div/form/div/div[2]/input'));
-      await element.sendKeys(avatarData[1], Key.RETURN);
+      await element.sendKeys(await avatarData[1], Key.RETURN);
       await driver.sleep(2000);
       await driver.get(url);
       await driver.sleep(2000);

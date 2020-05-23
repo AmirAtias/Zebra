@@ -1,7 +1,8 @@
 var utilitiesRequire = require("../models/crawlerUtilities");
 var utilities = new utilitiesRequire.crawlerUtilities();
-var reset = utilities.reset;
-var crawlingRequests = utilities.crawlingRequests;
+var reset = require('./resetCrawlingReq');
+
+var crawlingRequests = require('./crawlingRequests');
 
 async function clickIfCommentsButtonExists(element, By) {
   if (await element.findElements(By.css(".show.show-all-link")) != 0) {

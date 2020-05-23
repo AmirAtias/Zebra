@@ -5,11 +5,10 @@ const {
 
 var post = require('./post');
 
+var profile = require('./profile');
+var getRandomFictitiousUser = require("../models/getRandomFictitiousUser");
 class crawlerUtilities {
-    reset = require('./resetCrawlingReq');
-    crawlingRequests = require('./crawlingRequests');
-    profile = require('./profile');
-    getRandomFictitiousUser = require("../models/getRandomFictitiousUser");
+
 
     addZeroToStart(t) {
         if (t.length == 1) {
@@ -17,6 +16,7 @@ class crawlerUtilities {
         }
         return t;
     }
+
 
     getDateAndTime() {
         var houer = this.addZeroToStart(new Date().getHours().toString());
@@ -30,7 +30,7 @@ class crawlerUtilities {
 
     fillProfileSchema(userUrl, username, socialMedia) {
         var crawlingTime = this.getDateAndTime();
-        return new this.profile({
+        return new profile({
             url: userUrl,
             userName: username,
             socialMedia: socialMedia,
@@ -57,7 +57,7 @@ class crawlerUtilities {
             await driver.get(loginUrl);
             await driver.sleep(10000);
             // get user from db to login
-            var avatarData = await this.getRandomFictitiousUser.getRandomAvatar(socialMedia);
+            var avatarData = await getRandomFictitiousUser.getRandomAvatar(socialMedia);
             element = await driver.findElement(By.xpath(userNameId));
             await element.sendKeys(avatarData[0]);
             element = await driver.findElement(By.xpath(passwordId));
@@ -104,6 +104,7 @@ class crawlerUtilities {
                 global.logger.error("error in saveProfilePost function", {meta: {err: err.message}})
             } else {
                 global.logger.info("The crawl ended successfully");    
+                console.log("The crawl ended successfully  ")
             }
         });
     }
