@@ -5,6 +5,7 @@ async function checkURL(username, url, socialNetwork) {
       Builder,
       Key,
       promise,
+      until,
       By,
     } = require('selenium-webdriver');
     require('selenium-webdriver/lib/error');
@@ -29,12 +30,12 @@ async function checkURL(username, url, socialNetwork) {
       // await element.sendKeys('guyamir');
       await element.sendKeys(await avatarData[0]);
 
-
       element = await driver.findElement(By.xpath('//*[@id="login_password"]'));
       await element.sendKeys(await avatarData[1], Key.RETURN);
       await driver.sleep(4000);
       await driver.get(url);
       await driver.sleep(2000);
+  
       element = await driver.findElement(By.css('.profile'));
       currentUsername = await element.getText()
     }
@@ -47,22 +48,21 @@ async function checkURL(username, url, socialNetwork) {
       await element.sendKeys(await avatarData[1], Key.RETURN);
       await driver.sleep(2000);
       await driver.get(url);
-      await driver.sleep(2000);
+      await driver.sleep(8000);
+      //await driver.isElementPresent(By.css('.sc-jTzLTM.gsLxCE'));
       element = await driver.findElement(By.css('.sc-jTzLTM.gsLxCE'));
       currentUsername = await element.getText()
     }
-    else if (socialNetwork == "facebook") {
-
-    }
     else {
-      global.logger.info("This social network cannot be used with this software");    
+      global.logger.info("This social network cannot be used with this software");
       currentUsername = "";
     }
     await driver.close();
     return (currentUsername === username);
 
   } catch (error) {
-    global.logger.error("error in checking the url function", {meta:{ err: error.message }})
+    console.log(error)
+    global.logger.error("error in checking the url function", { meta: { err: error.message } })
     return false;
   }
 }

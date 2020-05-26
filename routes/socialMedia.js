@@ -176,8 +176,6 @@ router.post('/saveResults', withAuth, async function (req, res, next) {
     match: { "$or": [{ postContent: { "$regex": req.body.filter } }, { comments: { "$elemMatch": { commentContent: { "$regex": req.body.filter } } } }] }
   }).exec(async function (err, doc) {
     if (err) {
-      console.log(err)
-
       global.logger.error("error when trying to find user from database", { meta: { err: err.message } })
       res.json({ isSucess: "false" })
     }

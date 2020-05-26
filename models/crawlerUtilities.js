@@ -4,12 +4,10 @@ const {
 } = require('selenium-webdriver');
 
 var post = require('./post');
-
 var profile = require('./profile');
 var getRandomFictitiousUser = require("../models/getRandomFictitiousUser");
 class crawlerUtilities {
-
-
+    
     addZeroToStart(t) {
         if (t.length == 1) {
             t = '0' + "" + t;
