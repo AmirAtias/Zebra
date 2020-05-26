@@ -173,7 +173,7 @@ router.post('/saveResults', withAuth, async function (req, res, next) {
   }
   profile.findOne({ userName: req.body.user.userName, crawlingTime: req.body.user.crawlingTime, socialMedia: req.body.socialMedia }).populate({
     path: 'posts',
-    match: { "$or": [{ postContent: { "$regex": req.body.filter } }, { comments: { "$elemMatch": { commentContent: { "$regex": req.body.filter } } } }] }
+    match: { "$or": [{ postContent: { "$regex": filter } }, { comments: { "$elemMatch": { commentContent: { "$regex": filter } } } }] }
   }).exec(async function (err, doc) {
     if (err) {
       console.log(err)
