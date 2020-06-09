@@ -27,15 +27,12 @@ async function checkURL(username, url, socialNetwork) {
       await driver.sleep(10000);
       // get user from db
       element = await driver.findElement(By.xpath('//*[@id="login_username"]'));
-      // await element.sendKeys('guyamir');
       await element.sendKeys(await avatarData[0]);
-
       element = await driver.findElement(By.xpath('//*[@id="login_password"]'));
       await element.sendKeys(await avatarData[1], Key.RETURN);
       await driver.sleep(4000);
       await driver.get(url);
-      await driver.sleep(2000);
-  
+      await driver.sleep(8000);
       element = await driver.findElement(By.css('.profile'));
       currentUsername = await element.getText()
     }
@@ -49,6 +46,7 @@ async function checkURL(username, url, socialNetwork) {
       await driver.sleep(2000);
       await driver.get(url);
       await driver.sleep(8000);
+      //driver.wait(until.elementLocated(By.css('.sc-jTzLTM.gsLxCE')))
       //await driver.isElementPresent(By.css('.sc-jTzLTM.gsLxCE'));
       element = await driver.findElement(By.css('.sc-jTzLTM.gsLxCE'));
       currentUsername = await element.getText()

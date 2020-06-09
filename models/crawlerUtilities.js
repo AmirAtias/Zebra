@@ -15,7 +15,6 @@ class crawlerUtilities {
         return t;
     }
 
-
     getDateAndTime() {
         var houer = this.addZeroToStart(new Date().getHours().toString());
         var minuets = this.addZeroToStart(new Date().getMinutes().toString());
